@@ -1,0 +1,11 @@
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+export const getDriversFromDb = async (): Promise<any[]> => {
+    const getDrivers = await prisma.driver.findMany();
+    const driversArray: any[] = [];
+    getDrivers.forEach((driver) => {
+        driversArray.push(Object.values(driver));
+    });
+    return driversArray;
+};
