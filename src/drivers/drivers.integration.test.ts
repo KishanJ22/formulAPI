@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import axios, { AxiosResponse } from "axios";
 
-describe("Driver Router Tests", () => {
+describe("Driver Integration Tests", () => {
 
     const driversAxios = axios.create({
       baseURL: "http://localhost:3000",
