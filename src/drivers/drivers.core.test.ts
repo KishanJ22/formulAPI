@@ -1,12 +1,10 @@
 import {Driver, getAllDrivers, getOneDriver} from "./drivers.core";
 import { describe, expect, test, vi } from 'vitest';
-import { driverRouter } from "./drivers.router";
 import * as driversModel from "./drivers.model";
-import axios, { AxiosResponse } from "axios";
 
 const mockedDrivers = vi.spyOn(driversModel, "getDriversFromDb");
 
-describe("Driver Tests", () => {
+describe("/drivers GET Unit Tests", () => {
     test("Get all drivers", async () => {
         mockedDrivers.mockResolvedValueOnce([
           ["lewis-hamilton", "Lewis Hamilton","Lewis", "Hamilton", "Lewis Carl Davidson Hamilton", "HAM", "44", "MALE", "1985-01-07", null, "Stevenage", "united-kingdom", "united-kingdom", null, 1, 1, 1, 7, 346, 346, 105, 19751, 201, "4789.5", "4789.5", 104, 67, 16, 6],
@@ -27,5 +25,9 @@ describe("Driver Tests", () => {
           ["lewis-hamilton", "Lewis Hamilton","Lewis", "Hamilton", "Lewis Carl Davidson Hamilton", "HAM", "44", "MALE", "1985-01-07", null, "Stevenage", "united-kingdom", "united-kingdom", null, 1, 1, 1, 7, 346, 346, 105, 19751, 201, "4789.5", "4789.5", 104, 67, 16, 6]
         ]);
         expect(await getOneDriver("lewis-hamilton")).toEqual({ id: "lewis-hamilton", name: "Lewis Hamilton", firstName: "Lewis", lastName: "Hamilton", fullName: "Lewis Carl Davidson Hamilton", abbreviation: "HAM", permanentNumber: "44", gender: "MALE", dateOfBirth: "1985-01-07", dateOfDeath: null, placeOfBirth: "Stevenage", countryOfBirthId: "united-kingdom", nationalityCountryId: "united-kingdom", secondNationalityCountryId: null, bestChampionshipPosition: 1, bestStartingGridPosition: 1, bestRaceResult: 1, championshipWins: 7, raceEntries: 346, raceStarts: 346, raceWins: 105, raceLaps: 19751, podiums: 201, totalPoints: "4789.5", totalChampionshipPoints: "4789.5", polePositions: 104, fastestLaps: 67, totalDriverOfTheDay: 16, grandSlams: 6});
+    });
+
+    test("Error is thrown when driver is not found", async () => {
+        await expect(getOneDriver("kimi-antonelli")).rejects.toThrow("Driver not found");
     });
 });
