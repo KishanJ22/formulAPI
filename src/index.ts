@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get("/", (req: Request, res: Response) => {
-    res.send({ hello: "world" });
+    res.send({ message: "Welcome to FormulAPI!" });
 });
 
 app.get("/health", (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== "test") {
     app.listen(port, () => {
         console.log(`App listening on port ${port}`);
     });
-}
+};
 
 driverRouter(app);
 circuitRouter(app);
