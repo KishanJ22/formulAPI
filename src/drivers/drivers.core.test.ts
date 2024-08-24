@@ -28,7 +28,7 @@ describe("/drivers GET Unit Tests", () => {
     });
 
     test("Error is thrown when driver is not found", async () => {
-        await expect(getOneDriver("kimi-antonelli")).rejects.toThrow("Driver not found");
+        await expect(getOneDriver("kimi-antonelli")).rejects.toThrow("No Driver Found");
     });
 
     test("Get all drivers with search query", async () => {
