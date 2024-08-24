@@ -101,5 +101,5 @@ export const getOneDriver = async (driverId: string): Promise<Driver> => {
     if (driver) {
         return driver;
     }
-    else throw new Error("Driver not found");
+    else throw new Error("No Driver Found");
 };
