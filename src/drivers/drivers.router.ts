@@ -37,7 +37,7 @@ export const driverRouter = (app: Router) => {
                 res.status(404).send({ message: "No Driver Found" });
             } else {
                 res.status(500).send({ message: "Something went wrong" });
-            }
+            };
         }
         res.status(200).send(driver);
     });
