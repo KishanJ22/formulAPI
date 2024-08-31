@@ -75,10 +75,10 @@ export const getAllDrivers = async (searchQuery?: any): Promise<Driver[]> => {
         filteredDrivers = allDrivers.filter((driver: Driver) => {
             return Object.keys(searchQuery).every((key) => {
                 if (key === "raceEntries" || key === "raceStarts" || key === "raceWins" || key === "raceLaps" || key === "podiums" || key === "championshipWins" || key === "bestChampionshipPosition" || key === "bestStartingGridPosition" || key === "bestRaceResult" || key === "polePositions" || key === "fastestLaps" || key === "totalDriverOfTheDay" || key === "grandSlams") {
-                    return driver[key] === searchQuery[key];
+                    return driver[key] == searchQuery[key];
                 } else {
                     return driver[key].toLowerCase().includes(searchQuery[key].toLowerCase());
-                }
+                };
             });
         });
         if(filteredDrivers.length === 0) throw new Error("No Drivers Found");
