@@ -1,30 +1,85 @@
-import {Driver, getAllDrivers, getOneDriver} from "./drivers.core";
+import { getAllDrivers, getOneDriver} from "./drivers.core";
 import { describe, expect, test, vi } from 'vitest';
-import * as driversModel from "./drivers.model";
+import prisma from "../__mocks__/prisma";
+import { Decimal } from "@prisma/client/runtime/library";
 
-const mockedDrivers = vi.spyOn(driversModel, "getDriversFromDb");
+vi.mock('../db');
 
 describe("/drivers GET Unit Tests", () => {
     test("Get all drivers", async () => {
-        mockedDrivers.mockResolvedValueOnce([
-          ["lewis-hamilton", "Lewis Hamilton","Lewis", "Hamilton", "Lewis Carl Davidson Hamilton", "HAM", "44", "MALE", "1985-01-07", null, "Stevenage", "united-kingdom", "united-kingdom", null, 1, 1, 1, 7, 346, 346, 105, 19751, 201, "4789.5", "4789.5", 104, 67, 16, 6],
-          ['ayumu-iwasa', 'Ayumu Iwasa', 'Ayumu', 'Iwasa', 'Ayumu Iwasa', 'IWA', null, 'MALE', '2001-09-22', null, 'Moriguchi', 'japan', 'japan', null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          ['bas-leinders', 'Bas Leinders', 'Bas', 'Leinders', 'Bas Leinders', 'LEI', null, 'MALE', '1975-07-16', null, 'Bree', 'belgium', 'belgium', null, null, null, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        ]);
-        const drivers = await getAllDrivers();
-        const expectedDrivers = [
-          { id: "lewis-hamilton", name: "Lewis Hamilton", firstName: "Lewis", lastName: "Hamilton", fullName: "Lewis Carl Davidson Hamilton", abbreviation: "HAM", permanentNumber: "44", gender: "MALE", dateOfBirth: "1985-01-07", dateOfDeath: null, placeOfBirth: "Stevenage", countryOfBirthId: "united-kingdom", nationalityCountryId: "united-kingdom", secondNationalityCountryId: null, bestChampionshipPosition: 1, bestStartingGridPosition: 1, bestRaceResult: 1, championshipWins: 7, raceEntries: 346, raceStarts: 346, raceWins: 105, raceLaps: 19751, podiums: 201, totalPoints: "4789.5", totalChampionshipPoints: "4789.5", polePositions: 104, fastestLaps: 67, totalDriverOfTheDay: 16, grandSlams: 6},
-          { id: 'ayumu-iwasa', name: 'Ayumu Iwasa', firstName: 'Ayumu', lastName: 'Iwasa', fullName: 'Ayumu Iwasa', abbreviation: 'IWA', permanentNumber: null, gender: 'MALE',dateOfBirth: '2001-09-22', dateOfDeath: null, placeOfBirth: 'Moriguchi', countryOfBirthId: 'japan', nationalityCountryId: 'japan', secondNationalityCountryId: null, bestChampionshipPosition: null, bestStartingGridPosition: null, bestRaceResult: null, championshipWins: 0, raceEntries: 0, raceStarts: 0, raceWins: 0, raceLaps: 0, podiums: 0, totalPoints: 0, totalChampionshipPoints: 0, polePositions: 0, fastestLaps: 0, totalDriverOfTheDay: 0, grandSlams: 0 },
-          { id: 'bas-leinders', name: 'Bas Leinders', firstName: 'Bas', lastName: 'Leinders', fullName: 'Bas Leinders', abbreviation: 'LEI', permanentNumber: null, gender: 'MALE', dateOfBirth: '1975-07-16', dateOfDeath: null, placeOfBirth: 'Bree', countryOfBirthId: 'belgium', nationalityCountryId: 'belgium', secondNationalityCountryId: null, bestChampionshipPosition: null, bestStartingGridPosition: null, bestRaceResult: null, championshipWins: 0, raceEntries: 0, raceStarts: 0, raceWins: 0, raceLaps: 0, podiums: 0, totalPoints: 0, totalChampionshipPoints: 0, polePositions: 0, fastestLaps: 0, totalDriverOfTheDay: 0, grandSlams: 0 },
+        const value = [
+          {
+            id: "lewis-hamilton",
+            name: "Lewis Hamilton",
+            first_name: "Lewis",
+            last_name: "Hamilton",
+            full_name: "Lewis Carl Davidson Hamilton",
+            abbreviation: "HAM",
+            permanent_number: "44",
+            gender: "MALE",
+            date_of_birth: "1985-01-07",
+            date_of_death: null,
+            place_of_birth: "Stevenage",
+            country_of_birth_country_id: "united-kingdom",
+            nationality_country_id: "united-kingdom",
+            second_nationality_country_id: null,
+            best_championship_position: 1,
+            best_starting_grid_position: 1,
+            best_race_result: 1,
+            total_championship_wins: 7,
+            total_race_entries: 347,
+            total_race_starts: 347,
+            total_race_wins: 105,
+            total_race_laps: 19823,
+            total_podiums: 201,
+            total_points: new Decimal(4793.5),
+            total_championship_points: new Decimal(4793.5),
+            total_pole_positions: 104,
+            total_fastest_laps: 67,
+            total_driver_of_the_day: 16,
+            total_grand_slams: 6
+          }
         ];
-        expect(drivers).toEqual(expect.arrayContaining(expectedDrivers));
+        prisma.driver.findMany.mockResolvedValue(value);
+        const drivers = await getAllDrivers();
+        expect(drivers).toEqual(expect.arrayContaining(value));
     });
 
     test("Get one driver", async () => {
-        mockedDrivers.mockResolvedValueOnce([
-          ["lewis-hamilton", "Lewis Hamilton","Lewis", "Hamilton", "Lewis Carl Davidson Hamilton", "HAM", "44", "MALE", "1985-01-07", null, "Stevenage", "united-kingdom", "united-kingdom", null, 1, 1, 1, 7, 346, 346, 105, 19751, 201, "4789.5", "4789.5", 104, 67, 16, 6]
-        ]);
-        expect(await getOneDriver("lewis-hamilton")).toEqual({ id: "lewis-hamilton", name: "Lewis Hamilton", firstName: "Lewis", lastName: "Hamilton", fullName: "Lewis Carl Davidson Hamilton", abbreviation: "HAM", permanentNumber: "44", gender: "MALE", dateOfBirth: "1985-01-07", dateOfDeath: null, placeOfBirth: "Stevenage", countryOfBirthId: "united-kingdom", nationalityCountryId: "united-kingdom", secondNationalityCountryId: null, bestChampionshipPosition: 1, bestStartingGridPosition: 1, bestRaceResult: 1, championshipWins: 7, raceEntries: 346, raceStarts: 346, raceWins: 105, raceLaps: 19751, podiums: 201, totalPoints: "4789.5", totalChampionshipPoints: "4789.5", polePositions: 104, fastestLaps: 67, totalDriverOfTheDay: 16, grandSlams: 6});
+      const value =
+        {
+          id: "lewis-hamilton",
+          name: "Lewis Hamilton",
+          first_name: "Lewis",
+          last_name: "Hamilton",
+          full_name: "Lewis Carl Davidson Hamilton",
+          abbreviation: "HAM",
+          permanent_number: "44",
+          gender: "MALE",
+          date_of_birth: "1985-01-07",
+          date_of_death: null,
+          place_of_birth: "Stevenage",
+          country_of_birth_country_id: "united-kingdom",
+          nationality_country_id: "united-kingdom",
+          second_nationality_country_id: null,
+          best_championship_position: 1,
+          best_starting_grid_position: 1,
+          best_race_result: 1,
+          total_championship_wins: 7,
+          total_race_entries: 347,
+          total_race_starts: 347,
+          total_race_wins: 105,
+          total_race_laps: 19823,
+          total_podiums: 201,
+          total_points: new Decimal(4793.5),
+          total_championship_points: new Decimal(4793.5),
+          total_pole_positions: 104,
+          total_fastest_laps: 67,
+          total_driver_of_the_day: 16,
+          total_grand_slams: 6
+        };
+      prisma.driver.findUnique.mockResolvedValue(value);
+      expect(await getOneDriver("lewis-hamilton")).toEqual(value);
     });
 
     test("Error is thrown when driver is not found", async () => {
@@ -32,13 +87,41 @@ describe("/drivers GET Unit Tests", () => {
     });
 
     test("Get all drivers with search query", async () => {
-      mockedDrivers.mockResolvedValueOnce([
-        ["lewis-hamilton", "Lewis Hamilton","Lewis", "Hamilton", "Lewis Carl Davidson Hamilton", "HAM", "44", "MALE", "1985-01-07", null, "Stevenage", "united-kingdom", "united-kingdom", null, 1, 1, 1, 7, 346, 346, 105, 19751, 201, "4789.5", "4789.5", 104, 67, 16, 6]
-      ]);
-      const drivers = await getAllDrivers({name: "lewis"});
-      const expectedDrivers = [
-        { id: "lewis-hamilton", name: "Lewis Hamilton", firstName: "Lewis", lastName: "Hamilton", fullName: "Lewis Carl Davidson Hamilton", abbreviation: "HAM", permanentNumber: "44", gender: "MALE", dateOfBirth: "1985-01-07", dateOfDeath: null, placeOfBirth: "Stevenage", countryOfBirthId: "united-kingdom", nationalityCountryId: "united-kingdom", secondNationalityCountryId: null, bestChampionshipPosition: 1, bestStartingGridPosition: 1, bestRaceResult: 1, championshipWins: 7, raceEntries: 346, raceStarts: 346, raceWins: 105, raceLaps: 19751, podiums: 201, totalPoints: "4789.5", totalChampionshipPoints: "4789.5", polePositions: 104, fastestLaps: 67, totalDriverOfTheDay: 16, grandSlams: 6}
+      const value = [
+        {
+          id: "lewis-hamilton",
+          name: "Lewis Hamilton",
+          first_name: "Lewis",
+          last_name: "Hamilton",
+          full_name: "Lewis Carl Davidson Hamilton",
+          abbreviation: "HAM",
+          permanent_number: "44",
+          gender: "MALE",
+          date_of_birth: "1985-01-07",
+          date_of_death: null,
+          place_of_birth: "Stevenage",
+          country_of_birth_country_id: "united-kingdom",
+          nationality_country_id: "united-kingdom",
+          second_nationality_country_id: null,
+          best_championship_position: 1,
+          best_starting_grid_position: 1,
+          best_race_result: 1,
+          total_championship_wins: 7,
+          total_race_entries: 347,
+          total_race_starts: 347,
+          total_race_wins: 105,
+          total_race_laps: 19823,
+          total_podiums: 201,
+          total_points: new Decimal(4793.5),
+          total_championship_points: new Decimal(4793.5),
+          total_pole_positions: 104,
+          total_fastest_laps: 67,
+          total_driver_of_the_day: 16,
+          total_grand_slams: 6
+        }
       ];
-      expect(drivers).toEqual(expect.arrayContaining(expectedDrivers));
+      prisma.driver.findMany.mockResolvedValue(value);
+      const drivers = await getAllDrivers({name: "lewis"});
+      expect(drivers).toEqual(expect.arrayContaining(value));
     });
 });
