@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 export const getCircuitsFromDb = async (): Promise<any[]> => {
     const getCircuits = await prisma.circuit.findMany();

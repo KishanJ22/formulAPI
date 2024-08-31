@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 export const getDriversFromDb = async (): Promise<any[]> => {
     const getDrivers = await prisma.driver.findMany();
