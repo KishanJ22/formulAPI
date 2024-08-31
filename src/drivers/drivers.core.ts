@@ -2,33 +2,33 @@ import { getDriversFromDb } from "./drivers.model";
 export interface Driver {
     id: string;
     name: string;
-    firstName: string;
-    lastName: string;
-    fullName: string;
+    first_name: string;
+    last_name: string;
+    full_name: string;
     abbreviation: string;
-    permanentNumber?: string|null;
+    permanent_number?: string|null;
     gender: string;
-    dateOfBirth: string;
-    dateOfDeath?: string|null;
-    placeOfBirth: string;
-    countryOfBirthId: string;
-    nationalityCountryId: string;
-    secondNationalityCountryId?: string|null;
-    bestChampionshipPosition: number|null;
-    bestStartingGridPosition: number|null;
-    bestRaceResult: number|null;
-    championshipWins: number;
-    raceEntries: number;
-    raceStarts: number;
-    raceWins: number;
-    raceLaps: number;
-    podiums: number;
-    totalPoints: string;
-    totalChampionshipPoints: string;
-    polePositions: number;
-    fastestLaps: number;
-    totalDriverOfTheDay: number;
-    grandSlams: number;
+    date_of_birth: string;
+    date_of_death?: string|null;
+    place_of_birth: string;
+    country_of_birth_country_id: string;
+    nationality_country_id: string;
+    second_nationality_country_id?: string|null;
+    best_championship_position: number|null;
+    best_starting_grid_position: number|null;
+    best_race_result: number|null;
+    total_championship_wins: number;
+    total_race_entries: number;
+    total_race_starts: number;
+    total_race_wins: number;
+    total_race_laps: number;
+    total_podiums: number;
+    total_points: number;
+    total_championship_points: number;
+    total_pole_positions: number;
+    total_fastest_laps: number;
+    total_driver_of_the_day: number;
+    total_grand_slams: number;
     [key: string]: any; // Add index signature
 }
 
@@ -39,33 +39,33 @@ export const getAllDrivers = async (searchQuery?: any): Promise<Driver[]> => {
         return {
             id: driver[0],
             name: driver[1],
-            firstName: driver[2],
-            lastName: driver[3],
-            fullName: driver[4],
+            first_name: driver[2],
+            last_name: driver[3],
+            full_name: driver[4],
             abbreviation: driver[5],
-            permanentNumber: driver[6],
+            permanent_number: driver[6],
             gender: driver[7],
-            dateOfBirth: driver[8],
-            dateOfDeath: driver[9],
-            placeOfBirth: driver[10],
-            countryOfBirthId: driver[11],
-            nationalityCountryId: driver[12],
-            secondNationalityCountryId: driver[13],
-            bestChampionshipPosition: driver[14],
-            bestStartingGridPosition: driver[15],
-            bestRaceResult: driver[16],
-            championshipWins: driver[17],
-            raceEntries: driver[18],
-            raceStarts: driver[19],
-            raceWins: driver[20],
-            raceLaps: driver[21],
-            podiums: driver[22],
-            totalPoints: driver[23],
-            totalChampionshipPoints: driver[24],
-            polePositions: driver[25],
-            fastestLaps: driver[26],
-            totalDriverOfTheDay: driver[27],
-            grandSlams: driver[28],
+            date_of_birth: driver[8],
+            date_of_death: driver[9],
+            place_of_birth: driver[10],
+            country_of_birth_country_id: driver[11],
+            nationality_country_id: driver[12],
+            second_nationality_country_id: driver[13],
+            best_championship_position: driver[14],
+            best_starting_grid_position: driver[15],
+            best_race_result: driver[16],
+            total_championship_wins: driver[17],
+            total_race_entries: driver[18],
+            total_race_starts: driver[19],
+            total_race_wins: driver[20],
+            total_race_laps: driver[21],
+            total_podiums: driver[22],
+            total_points: driver[23],
+            total_championship_points: driver[24],
+            total_pole_positions: driver[25],
+            total_fastest_laps: driver[26],
+            total_driver_of_the_day: driver[27],
+            total_grand_slams: driver[28],
         };
     });
 
@@ -74,7 +74,7 @@ export const getAllDrivers = async (searchQuery?: any): Promise<Driver[]> => {
         let filteredDrivers: Driver[];
         filteredDrivers = allDrivers.filter((driver: Driver) => {
             return Object.keys(searchQuery).every((key) => {
-                if (key === "raceEntries" || key === "raceStarts" || key === "raceWins" || key === "raceLaps" || key === "podiums" || key === "championshipWins" || key === "bestChampionshipPosition" || key === "bestStartingGridPosition" || key === "bestRaceResult" || key === "polePositions" || key === "fastestLaps" || key === "totalDriverOfTheDay" || key === "grandSlams") {
+                if (key === "total_race_entries" || key === "total_race_starts" || key === "total_race_wins" || key === "total_race_laps" || key === "total_podiums" || key === "total_championship_wins" || key === "best_championship_position" || key === "best_starting_grid_position" || key === "best_race_result" || key === "total_pole_positions" || key === "total_fastest_laps" || key === "total_driver_of_the_day" || key === "total_grand_slams") {
                     return driver[key] == searchQuery[key];
                 } else {
                     return driver[key].toLowerCase().includes(searchQuery[key].toLowerCase());
