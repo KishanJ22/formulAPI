@@ -1,9 +1,16 @@
 import express, { Request, Response } from "express";
 import { driverRouter } from "./drivers/drivers.router";
 import { circuitRouter } from "./circuits/circuits.router";
+import axios from "axios";
+import http from "http";
 
 const app = express();
 const port = process.env.PORT || 3000;
+const appUrl = `http://localhost:${port}`;
+export const driversAxios = axios.create({
+    baseURL: `${appUrl}`,
+    httpAgent: new http.Agent({ keepAlive: true }),
+});
 
 app.get("/", (req: Request, res: Response) => {
     res.send({ message: "Welcome to FormulAPI!" });

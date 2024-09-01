@@ -22,7 +22,6 @@ describe("Driver Router Tests", () => {
     test("Verify that the response is an object when calling /drivers/:id endpoint", async () => {
         const response = await request(app)
             .get('/drivers/lewis-hamilton');
-        console.log(response.body);
         expect(response.body).toBeInstanceOf(Object);
     });
 
