@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/drivers/fernando-alonso
-  body: none
+  url: http://localhost:3000/drivers/:id
+  body: formUrlEncoded
   auth: none
+}
+
+params:path {
+  id: 
 }
