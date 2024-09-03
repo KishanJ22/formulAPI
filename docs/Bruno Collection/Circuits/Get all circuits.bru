@@ -22,3 +22,8 @@ params:query {
   ~longitude: 
   ~total_races_held: 
 }
+
+assert {
+  res.status: eq 200
+  res.body: isArray 
+}
