@@ -18,6 +18,8 @@ export const circuitRouter = (app: Router) => {
         } catch (err: any) {
             if (err.message == "No Circuits Found") {
                 res.status(404).send({ message: "No Circuits Found" });
+            } else if (err.message == "Invalid Search Query") {
+                res.status(404).send({ message: "Invalid Search Query" });
             } else {
                 res.status(500).send({ message: "Something went wrong" });
             }
