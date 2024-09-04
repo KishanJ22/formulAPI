@@ -1,16 +1,16 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { driversAxios } from '../index';
 import { AxiosResponse, AxiosError } from "axios";
 
 describe("Driver Integration Tests", () => {
   
   describe("GET /drivers", () => {
-    test("Response status code must be 200", async () => {
+    it("should return a response with a 200 status code", async () => {
       const response: AxiosResponse = await driversAxios.get("/drivers");
       expect(response.status).toEqual(200);
     });
   
-    test("Successfully returns drivers in the correct format", async () => {
+    it("should return the driver objects in the correct format", async () => {
       const response: AxiosResponse = await driversAxios.get("/drivers");
       const expectedDrivers =
       [{
@@ -78,29 +78,32 @@ describe("Driver Integration Tests", () => {
       expect(response.data).toEqual(expect.arrayContaining(expectedDrivers));
     });
 
-    test("Successfully throws the `Invalid Search Query` 404 error when an invalid query is used", async () => {
+    it("should throw the `Invalid Search Query` 404 error when an invalid query key is used", async () => {
       const invalid_query = "invalid";
       try {
-        const response = await driversAxios.get("/drivers", { params: { invalid_query } });
+        await driversAxios.get("/drivers", { params: { invalid_query } });
       } catch (error) {
-        expect((error as AxiosError).response?.data).toEqual({ message: "Invalid Search Query" });
-        expect((error as AxiosError).response?.status).toEqual(404);
+        const errorResponse = (error as AxiosError).response;
+        expect(errorResponse?.data).toEqual({ message: "Invalid Search Query" });
+        expect(errorResponse?.status).toEqual(404);
       }
     });
 
-    test("Successfully throws the `No Drivers Found` 404 error when no drivers are found", async () => {
-      const last_name = "antontelli";
+    it("should throw the `No Drivers Found` 404 error when no drivers are found", async () => {
+      const last_name = "ronaldo";
       try {
-        const response = await driversAxios.get("/drivers", { params: { last_name } });
+        await driversAxios.get("/drivers", { params: { last_name } });
+        throw new Error("404 error not thrown");
       } catch (error) {
-        expect((error as AxiosError).response?.data).toEqual({ message: "No Drivers Found" });
-        expect((error as AxiosError).response?.status).toEqual(404);
+        const errorResponse = (error as AxiosError).response;
+        expect(errorResponse?.data).toEqual({ message: "No Drivers Found" });
+        expect(errorResponse?.status).toEqual(404);
       }
     });
   });
 
   describe("GET /drivers/:id", () => {
-    test("Successfully returns the expected driver", async () => {
+    it("should return the expected driver", async () => {
       const id = "lewis-hamilton";
       const response = await driversAxios.get(`/drivers/${id}`);
       const expectedDriver = {
@@ -137,13 +140,15 @@ describe("Driver Integration Tests", () => {
       expect(response.data).toStrictEqual(expectedDriver);
     });
 
-    test("Successfully throws the `No Driver Found` 404 error when an invalid id is used", async () => {
-      const id = "kimi-antontelli";
+    it("should throw the `No Driver Found` 404 error when an invalid id is used", async () => {
+      const id = "cristiano-ronaldo";
       try {
         const response = await driversAxios.get(`/drivers/${id}`);
+        throw new Error("404 error not thrown");
       } catch (error) {
-        expect((error as AxiosError).response?.data).toEqual({ message: "No Driver Found" });
-        expect((error as AxiosError).response?.status).toEqual(404);
+        const errorResponse = (error as AxiosError).response;
+        expect(errorResponse?.data).toEqual({ message: "No Driver Found" });
+        expect(errorResponse?.status).toEqual(404);
       }
     });
   });
