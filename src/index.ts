@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import { driverRouter } from "./drivers/drivers.router";
 import { circuitRouter } from "./circuits/circuits.router";
 import axios from "axios";
@@ -12,11 +12,11 @@ export const driversAxios = axios.create({
     httpAgent: new http.Agent({ keepAlive: true }),
 });
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (res: Response) => {
     res.send({ message: "Welcome to FormulAPI!" });
 });
 
-app.get("/health", (req: Request, res: Response) => {
+app.get("/health", (res: Response) => {
     res.send({
         message: "Ready to receive requests",
         version: `${process.env.npm_package_version}`,
