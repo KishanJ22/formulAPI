@@ -5,16 +5,17 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/drivers
+  url: http://localhost:3000/drivers?total_championship_wins=7
   body: none
   auth: none
 }
 
 params:query {
+  total_championship_wins: 7
   ~id: 
   ~name: 
-  ~first_name:
-  ~last_name:
+  ~first_name: 
+  ~last_name: 
   ~full_name: 
   ~abbreviation: 
   ~permanent_number: 
@@ -27,8 +28,7 @@ params:query {
   ~second_nationality_country_id: 
   ~best_championship_position: 
   ~best_starting_grid_position: 
-  ~best_race_result:
-  ~total_championship_wins:
+  ~best_race_result: 
   ~total_race_entries: 
   ~total_race_starts: 
   ~total_race_wins: 
