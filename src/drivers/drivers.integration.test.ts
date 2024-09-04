@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { driversAxios } from '../index';
-import { AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import prisma from '../db';
+import { appUrl } from '../config';
+
+const driversAxios = axios.create({
+  baseURL: `${appUrl}`
+});
 
 describe("Driver Integration Tests", () => {
   
