@@ -6,5 +6,6 @@ export default defineConfig({
             provider: "istanbul",
             reporter: ["html", "lcov", "text"],
         },
+        reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : ['dot'],
     },
 });
