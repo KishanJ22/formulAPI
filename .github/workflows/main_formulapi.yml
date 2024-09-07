@@ -29,7 +29,7 @@ jobs:
           npx prisma generate
           npm run build --if-present
           npm run start
-          npm run test --if-present
+          npm run test
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
