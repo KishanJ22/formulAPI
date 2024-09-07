@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "vitest",
+        "test": "vitest run",
         "build": "tsc -b",
         "prod": "node dist/index.js",
         "dev": "nodemon src/index.ts"
