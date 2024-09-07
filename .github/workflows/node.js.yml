@@ -32,10 +32,10 @@ jobs:
       run: npm ci
       
     - name: Setup Prisma
-      run: npx prisma migrate deploy
+      run: npx prisma generate
       
     - name: Build Project
       run: npm run build
       
-    - name: Run Tesets
+    - name: Run Tests
       run: npm test
