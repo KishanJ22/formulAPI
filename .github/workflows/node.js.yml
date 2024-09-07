@@ -12,22 +12,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     strategy:
       matrix:
         node-version: [18.x]
+        
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
         
-    - run: npm ci
-    - run: npx prisma migrate deploy
-    - run: npm run build
-    - run: npm test
+    - name: Install Dependencies
+      run: npm ci
+      
+    - name: Setup Prisma
+      run: npx prisma migrate deploy
+      
+    - name: Build Project
+      run: npm run build
+      
+    - name: Run Tesets
+      run: npm test
