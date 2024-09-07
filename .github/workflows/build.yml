@@ -29,8 +29,11 @@ jobs:
     - name: Build Project
       run: npm run build
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-artifact
-        path: ./dist
+    - name: Start API Server
+      run: npm start &
+
+    - name: Wait for API Server to start
+      run: sleep 5
+
+    - name: Run Tests
+      run: npm test
