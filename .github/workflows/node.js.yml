@@ -16,7 +16,7 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [18.x, 20.x]
         
     steps:
     - name: Checkout repository
@@ -36,6 +36,9 @@ jobs:
       
     - name: Build Project
       run: npm run build
+
+    - name: Start API server
+      run: npm run start &
       
     - name: Run Tests
       run: npm test
