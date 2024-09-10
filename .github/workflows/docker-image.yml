@@ -12,6 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag formulapi:latest
-    - name: Push the Docker image
-      run: docker push kishjet/formulapi:latest
+      run: docker build . --file Dockerfile --tag formulapi:latest && docker push kishjet/formulapi:latest
