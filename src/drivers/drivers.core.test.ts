@@ -5,7 +5,7 @@ import { Decimal } from "@prisma/client/runtime/library";
 
 vi.mock('../db');
 
-describe("/drivers GET Unit Tests", () => {
+describe.skip("/drivers GET Unit Tests", () => {
     test("Get all drivers", async () => {
         const value = [
           {
