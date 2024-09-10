@@ -1,558 +1,559 @@
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
 }
-model circuit {
-  id               String  @id
-  name             String
-  full_name        String
-  previous_names   String?
-  type             String
-  place_name       String
-  country_id       String
-  latitude         Decimal
-  longitude        Decimal
-  total_races_held Int
-  country          country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  race             race[]
 
-  @@index([country_id], map: "circ_country_id_idx")
-  @@index([place_name], map: "circ_place_name_idx")
-  @@index([type], map: "circ_type_idx")
-  @@index([full_name], map: "circ_full_name_idx")
-  @@index([name], map: "circ_name_idx")
+model circuit {
+    id               String  @id
+    name             String
+    full_name        String
+    previous_names   String?
+    type             String
+    place_name       String
+    country_id       String
+    latitude         Decimal
+    longitude        Decimal
+    total_races_held Int
+    country          country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race             race[]
+
+    @@index([country_id], map: "circ_country_id_idx")
+    @@index([place_name], map: "circ_place_name_idx")
+    @@index([type], map: "circ_type_idx")
+    @@index([full_name], map: "circ_full_name_idx")
+    @@index([name], map: "circ_name_idx")
 }
 
 model constructor {
-  id                                                                                                                    String                                  @id
-  name                                                                                                                  String
-  full_name                                                                                                             String
-  country_id                                                                                                            String
-  best_championship_position                                                                                            Int?
-  best_starting_grid_position                                                                                           Int?
-  best_race_result                                                                                                      Int?
-  total_championship_wins                                                                                               Int
-  total_race_entries                                                                                                    Int
-  total_race_starts                                                                                                     Int
-  total_race_wins                                                                                                       Int
-  total_1_and_2_finishes                                                                                                Int
-  total_race_laps                                                                                                       Int
-  total_podiums                                                                                                         Int
-  total_podium_races                                                                                                    Int
-  total_championship_points                                                                                             Decimal
-  total_pole_positions                                                                                                  Int
-  total_fastest_laps                                                                                                    Int
-  country                                                                                                               country                                 @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor_previous_next_constructor_constructor_previous_next_constructor_previous_next_constructor_idToconstructor constructor_previous_next_constructor[] @relation("constructor_previous_next_constructor_previous_next_constructor_idToconstructor")
-  constructor_previous_next_constructor_constructor_previous_next_constructor_constructor_idToconstructor               constructor_previous_next_constructor[] @relation("constructor_previous_next_constructor_constructor_idToconstructor")
-  race_constructor_standing                                                                                             race_constructor_standing[]
-  race_data                                                                                                             race_data[]
-  season_constructor_standing                                                                                           season_constructor_standing[]
-  season_entrant_constructor                                                                                            season_entrant_constructor[]
-  season_entrant_driver                                                                                                 season_entrant_driver[]
-  season_entrant_tyre_manufacturer                                                                                      season_entrant_tyre_manufacturer[]
+    id                                                                                                                    String                                  @id
+    name                                                                                                                  String
+    full_name                                                                                                             String
+    country_id                                                                                                            String
+    best_championship_position                                                                                            Int?
+    best_starting_grid_position                                                                                           Int?
+    best_race_result                                                                                                      Int?
+    total_championship_wins                                                                                               Int
+    total_race_entries                                                                                                    Int
+    total_race_starts                                                                                                     Int
+    total_race_wins                                                                                                       Int
+    total_1_and_2_finishes                                                                                                Int
+    total_race_laps                                                                                                       Int
+    total_podiums                                                                                                         Int
+    total_podium_races                                                                                                    Int
+    total_championship_points                                                                                             Decimal
+    total_pole_positions                                                                                                  Int
+    total_fastest_laps                                                                                                    Int
+    country                                                                                                               country                                 @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor_previous_next_constructor_constructor_previous_next_constructor_previous_next_constructor_idToconstructor constructor_previous_next_constructor[] @relation("constructor_previous_next_constructor_previous_next_constructor_idToconstructor")
+    constructor_previous_next_constructor_constructor_previous_next_constructor_constructor_idToconstructor               constructor_previous_next_constructor[] @relation("constructor_previous_next_constructor_constructor_idToconstructor")
+    race_constructor_standing                                                                                             race_constructor_standing[]
+    race_data                                                                                                             race_data[]
+    season_constructor_standing                                                                                           season_constructor_standing[]
+    season_entrant_constructor                                                                                            season_entrant_constructor[]
+    season_entrant_driver                                                                                                 season_entrant_driver[]
+    season_entrant_tyre_manufacturer                                                                                      season_entrant_tyre_manufacturer[]
 
-  @@index([country_id], map: "cons_country_id_idx")
-  @@index([full_name], map: "cons_full_name_idx")
-  @@index([name], map: "cons_name_idx")
+    @@index([country_id], map: "cons_country_id_idx")
+    @@index([full_name], map: "cons_full_name_idx")
+    @@index([name], map: "cons_name_idx")
 }
 
 model constructor_previous_next_constructor {
-  constructor_id                                                                              String
-  previous_next_constructor_id                                                                String
-  year_from                                                                                   Int
-  year_to                                                                                     Int?
-  constructor_constructor_previous_next_constructor_previous_next_constructor_idToconstructor constructor @relation("constructor_previous_next_constructor_previous_next_constructor_idToconstructor", fields: [previous_next_constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor_constructor_previous_next_constructor_constructor_idToconstructor               constructor @relation("constructor_previous_next_constructor_constructor_idToconstructor", fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor_id                                                                              String
+    previous_next_constructor_id                                                                String
+    year_from                                                                                   Int
+    year_to                                                                                     Int?
+    constructor_constructor_previous_next_constructor_previous_next_constructor_idToconstructor constructor @relation("constructor_previous_next_constructor_previous_next_constructor_idToconstructor", fields: [previous_next_constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor_constructor_previous_next_constructor_constructor_idToconstructor               constructor @relation("constructor_previous_next_constructor_constructor_idToconstructor", fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([constructor_id, previous_next_constructor_id, year_from])
-  @@index([previous_next_constructor_id], map: "cpnc_previous_next_constructor_id_idx")
-  @@index([constructor_id], map: "cpnc_constructor_id_idx")
+    @@id([constructor_id, previous_next_constructor_id, year_from])
+    @@index([previous_next_constructor_id], map: "cpnc_previous_next_constructor_id_idx")
+    @@index([constructor_id], map: "cpnc_constructor_id_idx")
 }
 
 model continent {
-  id      String    @id
-  code    String    @unique(map: "sqlite_autoindex_continent_2")
-  name    String    @unique(map: "sqlite_autoindex_continent_3")
-  demonym String
-  country country[]
+    id      String    @id
+    code    String    @unique(map: "sqlite_autoindex_continent_2")
+    name    String    @unique(map: "sqlite_autoindex_continent_3")
+    demonym String
+    country country[]
 }
 
 model country {
-  id                                                   String                @id
-  alpha2_code                                          String                @unique(map: "sqlite_autoindex_country_2")
-  alpha3_code                                          String                @unique(map: "sqlite_autoindex_country_3")
-  name                                                 String                @unique(map: "sqlite_autoindex_country_4")
-  demonym                                              String?
-  continent_id                                         String
-  circuit                                              circuit[]
-  constructor                                          constructor[]
-  continent                                            continent             @relation(fields: [continent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  driver_driver_second_nationality_country_idTocountry driver[]              @relation("driver_second_nationality_country_idTocountry")
-  driver_driver_nationality_country_idTocountry        driver[]              @relation("driver_nationality_country_idTocountry")
-  driver_driver_country_of_birth_country_idTocountry   driver[]              @relation("driver_country_of_birth_country_idTocountry")
-  engine_manufacturer                                  engine_manufacturer[]
-  grand_prix                                           grand_prix[]
-  season_entrant                                       season_entrant[]
-  tyre_manufacturer                                    tyre_manufacturer[]
+    id                                                   String                @id
+    alpha2_code                                          String                @unique(map: "sqlite_autoindex_country_2")
+    alpha3_code                                          String                @unique(map: "sqlite_autoindex_country_3")
+    name                                                 String                @unique(map: "sqlite_autoindex_country_4")
+    demonym                                              String?
+    continent_id                                         String
+    circuit                                              circuit[]
+    constructor                                          constructor[]
+    continent                                            continent             @relation(fields: [continent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_driver_second_nationality_country_idTocountry driver[]              @relation("driver_second_nationality_country_idTocountry")
+    driver_driver_nationality_country_idTocountry        driver[]              @relation("driver_nationality_country_idTocountry")
+    driver_driver_country_of_birth_country_idTocountry   driver[]              @relation("driver_country_of_birth_country_idTocountry")
+    engine_manufacturer                                  engine_manufacturer[]
+    grand_prix                                           grand_prix[]
+    season_entrant                                       season_entrant[]
+    tyre_manufacturer                                    tyre_manufacturer[]
 
-  @@index([continent_id], map: "coun_continent_id_idx")
+    @@index([continent_id], map: "coun_continent_id_idx")
 }
 
 model driver {
-  id                                                                            String                       @id
-  name                                                                          String
-  first_name                                                                    String
-  last_name                                                                     String
-  full_name                                                                     String
-  abbreviation                                                                  String
-  permanent_number                                                              String?
-  gender                                                                        String
-  date_of_birth                                                                 String
-  date_of_death                                                                 String?
-  place_of_birth                                                                String
-  country_of_birth_country_id                                                   String
-  nationality_country_id                                                        String
-  second_nationality_country_id                                                 String?
-  best_championship_position                                                    Int?
-  best_starting_grid_position                                                   Int?
-  best_race_result                                                              Int?
-  total_championship_wins                                                       Int
-  total_race_entries                                                            Int
-  total_race_starts                                                             Int
-  total_race_wins                                                               Int
-  total_race_laps                                                               Int
-  total_podiums                                                                 Int
-  total_points                                                                  Decimal
-  total_championship_points                                                     Decimal
-  total_pole_positions                                                          Int
-  total_fastest_laps                                                            Int
-  total_driver_of_the_day                                                       Int
-  total_grand_slams                                                             Int
-  country_driver_second_nationality_country_idTocountry                         country?                     @relation("driver_second_nationality_country_idTocountry", fields: [second_nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  country_driver_nationality_country_idTocountry                                country                      @relation("driver_nationality_country_idTocountry", fields: [nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  country_driver_country_of_birth_country_idTocountry                           country                      @relation("driver_country_of_birth_country_idTocountry", fields: [country_of_birth_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  driver_family_relationship_driver_family_relationship_other_driver_idTodriver driver_family_relationship[] @relation("driver_family_relationship_other_driver_idTodriver")
-  driver_family_relationship_driver_family_relationship_driver_idTodriver       driver_family_relationship[] @relation("driver_family_relationship_driver_idTodriver")
-  race_data                                                                     race_data[]
-  race_driver_standing                                                          race_driver_standing[]
-  season_driver_standing                                                        season_driver_standing[]
-  season_entrant_driver                                                         season_entrant_driver[]
+    id                                                                            String                       @id
+    name                                                                          String
+    first_name                                                                    String
+    last_name                                                                     String
+    full_name                                                                     String
+    abbreviation                                                                  String
+    permanent_number                                                              String?
+    gender                                                                        String
+    date_of_birth                                                                 String
+    date_of_death                                                                 String?
+    place_of_birth                                                                String
+    country_of_birth_country_id                                                   String
+    nationality_country_id                                                        String
+    second_nationality_country_id                                                 String?
+    best_championship_position                                                    Int?
+    best_starting_grid_position                                                   Int?
+    best_race_result                                                              Int?
+    total_championship_wins                                                       Int
+    total_race_entries                                                            Int
+    total_race_starts                                                             Int
+    total_race_wins                                                               Int
+    total_race_laps                                                               Int
+    total_podiums                                                                 Int
+    total_points                                                                  Decimal
+    total_championship_points                                                     Decimal
+    total_pole_positions                                                          Int
+    total_fastest_laps                                                            Int
+    total_driver_of_the_day                                                       Int
+    total_grand_slams                                                             Int
+    country_driver_second_nationality_country_idTocountry                         country?                     @relation("driver_second_nationality_country_idTocountry", fields: [second_nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    country_driver_nationality_country_idTocountry                                country                      @relation("driver_nationality_country_idTocountry", fields: [nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    country_driver_country_of_birth_country_idTocountry                           country                      @relation("driver_country_of_birth_country_idTocountry", fields: [country_of_birth_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_family_relationship_driver_family_relationship_other_driver_idTodriver driver_family_relationship[] @relation("driver_family_relationship_other_driver_idTodriver")
+    driver_family_relationship_driver_family_relationship_driver_idTodriver       driver_family_relationship[] @relation("driver_family_relationship_driver_idTodriver")
+    race_data                                                                     race_data[]
+    race_driver_standing                                                          race_driver_standing[]
+    season_driver_standing                                                        season_driver_standing[]
+    season_entrant_driver                                                         season_entrant_driver[]
 
-  @@index([second_nationality_country_id], map: "driv_second_nationality_country_id_idx")
-  @@index([nationality_country_id], map: "driv_nationality_country_id_idx")
-  @@index([country_of_birth_country_id], map: "driv_country_of_birth_country_id_idx")
-  @@index([place_of_birth], map: "driv_place_of_birth_idx")
-  @@index([date_of_death], map: "driv_date_of_death_idx")
-  @@index([date_of_birth], map: "driv_date_of_birth_idx")
-  @@index([gender], map: "driv_gender_idx")
-  @@index([permanent_number], map: "driv_permanent_number_idx")
-  @@index([abbreviation], map: "driv_abbreviation_idx")
-  @@index([full_name], map: "driv_full_name_idx")
-  @@index([last_name], map: "driv_last_name_idx")
-  @@index([first_name], map: "driv_first_name_idx")
-  @@index([name], map: "driv_name_idx")
+    @@index([second_nationality_country_id], map: "driv_second_nationality_country_id_idx")
+    @@index([nationality_country_id], map: "driv_nationality_country_id_idx")
+    @@index([country_of_birth_country_id], map: "driv_country_of_birth_country_id_idx")
+    @@index([place_of_birth], map: "driv_place_of_birth_idx")
+    @@index([date_of_death], map: "driv_date_of_death_idx")
+    @@index([date_of_birth], map: "driv_date_of_birth_idx")
+    @@index([gender], map: "driv_gender_idx")
+    @@index([permanent_number], map: "driv_permanent_number_idx")
+    @@index([abbreviation], map: "driv_abbreviation_idx")
+    @@index([full_name], map: "driv_full_name_idx")
+    @@index([last_name], map: "driv_last_name_idx")
+    @@index([first_name], map: "driv_first_name_idx")
+    @@index([name], map: "driv_name_idx")
 }
 
 model driver_family_relationship {
-  driver_id                                                 String
-  other_driver_id                                           String
-  type                                                      String
-  driver_driver_family_relationship_other_driver_idTodriver driver @relation("driver_family_relationship_other_driver_idTodriver", fields: [other_driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  driver_driver_family_relationship_driver_idTodriver       driver @relation("driver_family_relationship_driver_idTodriver", fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_id                                                 String
+    other_driver_id                                           String
+    type                                                      String
+    driver_driver_family_relationship_other_driver_idTodriver driver @relation("driver_family_relationship_other_driver_idTodriver", fields: [other_driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_driver_family_relationship_driver_idTodriver       driver @relation("driver_family_relationship_driver_idTodriver", fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([driver_id, other_driver_id, type])
-  @@index([other_driver_id], map: "drfr_other_driver_id_idx")
-  @@index([driver_id], map: "drfr_driver_id_idx")
+    @@id([driver_id, other_driver_id, type])
+    @@index([other_driver_id], map: "drfr_other_driver_id_idx")
+    @@index([driver_id], map: "drfr_driver_id_idx")
 }
 
 model engine_manufacturer {
-  id                               String                             @id
-  name                             String
-  country_id                       String
-  best_championship_position       Int?
-  best_starting_grid_position      Int?
-  best_race_result                 Int?
-  total_championship_wins          Int
-  total_race_entries               Int
-  total_race_starts                Int
-  total_race_wins                  Int
-  total_race_laps                  Int
-  total_podiums                    Int
-  total_podium_races               Int
-  total_championship_points        Decimal
-  total_pole_positions             Int
-  total_fastest_laps               Int
-  country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  race_constructor_standing        race_constructor_standing[]
-  race_data                        race_data[]
-  season_constructor_standing      season_constructor_standing[]
-  season_entrant_constructor       season_entrant_constructor[]
-  season_entrant_driver            season_entrant_driver[]
-  season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
+    id                               String                             @id
+    name                             String
+    country_id                       String
+    best_championship_position       Int?
+    best_starting_grid_position      Int?
+    best_race_result                 Int?
+    total_championship_wins          Int
+    total_race_entries               Int
+    total_race_starts                Int
+    total_race_wins                  Int
+    total_race_laps                  Int
+    total_podiums                    Int
+    total_podium_races               Int
+    total_championship_points        Decimal
+    total_pole_positions             Int
+    total_fastest_laps               Int
+    country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race_constructor_standing        race_constructor_standing[]
+    race_data                        race_data[]
+    season_constructor_standing      season_constructor_standing[]
+    season_entrant_constructor       season_entrant_constructor[]
+    season_entrant_driver            season_entrant_driver[]
+    season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
 
-  @@index([country_id], map: "enma_country_id_idx")
-  @@index([name], map: "enma_name_idx")
+    @@index([country_id], map: "enma_country_id_idx")
+    @@index([name], map: "enma_name_idx")
 }
 
 model entrant {
-  id                               String                             @id
-  name                             String
-  season_entrant                   season_entrant[]
-  season_entrant_constructor       season_entrant_constructor[]
-  season_entrant_driver            season_entrant_driver[]
-  season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
+    id                               String                             @id
+    name                             String
+    season_entrant                   season_entrant[]
+    season_entrant_constructor       season_entrant_constructor[]
+    season_entrant_driver            season_entrant_driver[]
+    season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
 
-  @@index([name], map: "entr_name_idx")
+    @@index([name], map: "entr_name_idx")
 }
 
 model grand_prix {
-  id               String   @id
-  name             String
-  full_name        String
-  short_name       String
-  abbreviation     String
-  country_id       String?
-  total_races_held Int
-  country          country? @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  race             race[]
+    id               String   @id
+    name             String
+    full_name        String
+    short_name       String
+    abbreviation     String
+    country_id       String?
+    total_races_held Int
+    country          country? @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race             race[]
 
-  @@index([country_id], map: "grpr_country_id_idx")
-  @@index([abbreviation], map: "grpr_abbreviation_idx")
-  @@index([short_name], map: "grpr_short_name_idx")
-  @@index([full_name], map: "grpr_full_name_idx")
-  @@index([name], map: "grpr_name_idx")
+    @@index([country_id], map: "grpr_country_id_idx")
+    @@index([abbreviation], map: "grpr_abbreviation_idx")
+    @@index([short_name], map: "grpr_short_name_idx")
+    @@index([full_name], map: "grpr_full_name_idx")
+    @@index([name], map: "grpr_name_idx")
 }
 
 model race {
-  id                        Int                         @id @default(autoincrement())
-  year                      Int
-  round                     Int
-  date                      DateTime
-  time                      String?
-  grand_prix_id             String
-  official_name             String
-  qualifying_format         String
-  sprint_qualifying_format  String?
-  circuit_id                String
-  circuit_type              String
-  course_length             Decimal
-  laps                      Int
-  distance                  Decimal
-  scheduled_laps            Int?
-  scheduled_distance        Decimal?
-  pre_qualifying_date       DateTime?
-  pre_qualifying_time       String?
-  free_practice_1_date      DateTime?
-  free_practice_1_time      String?
-  free_practice_2_date      DateTime?
-  free_practice_2_time      String?
-  free_practice_3_date      DateTime?
-  free_practice_3_time      String?
-  free_practice_4_date      DateTime?
-  free_practice_4_time      String?
-  qualifying_1_date         DateTime?
-  qualifying_1_time         String?
-  qualifying_2_date         DateTime?
-  qualifying_2_time         String?
-  qualifying_date           DateTime?
-  qualifying_time           String?
-  sprint_qualifying_date    DateTime?
-  sprint_qualifying_time    String?
-  sprint_race_date          DateTime?
-  sprint_race_time          String?
-  warming_up_date           DateTime?
-  warming_up_time           String?
-  circuit                   circuit                     @relation(fields: [circuit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  grand_prix                grand_prix                  @relation(fields: [grand_prix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                    season                      @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-  race_constructor_standing race_constructor_standing[]
-  race_data                 race_data[]
-  race_driver_standing      race_driver_standing[]
+    id                        Int                         @id @default(autoincrement())
+    year                      Int
+    round                     Int
+    date                      DateTime
+    time                      String?
+    grand_prix_id             String
+    official_name             String
+    qualifying_format         String
+    sprint_qualifying_format  String?
+    circuit_id                String
+    circuit_type              String
+    course_length             Decimal
+    laps                      Int
+    distance                  Decimal
+    scheduled_laps            Int?
+    scheduled_distance        Decimal?
+    pre_qualifying_date       DateTime?
+    pre_qualifying_time       String?
+    free_practice_1_date      DateTime?
+    free_practice_1_time      String?
+    free_practice_2_date      DateTime?
+    free_practice_2_time      String?
+    free_practice_3_date      DateTime?
+    free_practice_3_time      String?
+    free_practice_4_date      DateTime?
+    free_practice_4_time      String?
+    qualifying_1_date         DateTime?
+    qualifying_1_time         String?
+    qualifying_2_date         DateTime?
+    qualifying_2_time         String?
+    qualifying_date           DateTime?
+    qualifying_time           String?
+    sprint_qualifying_date    DateTime?
+    sprint_qualifying_time    String?
+    sprint_race_date          DateTime?
+    sprint_race_time          String?
+    warming_up_date           DateTime?
+    warming_up_time           String?
+    circuit                   circuit                     @relation(fields: [circuit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    grand_prix                grand_prix                  @relation(fields: [grand_prix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season                    season                      @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    race_constructor_standing race_constructor_standing[]
+    race_data                 race_data[]
+    race_driver_standing      race_driver_standing[]
 
-  @@unique([year, round], map: "sqlite_autoindex_race_1")
-  @@index([circuit_id])
-  @@index([official_name])
-  @@index([grand_prix_id])
-  @@index([date])
-  @@index([round])
-  @@index([year])
+    @@unique([year, round], map: "sqlite_autoindex_race_1")
+    @@index([circuit_id])
+    @@index([official_name])
+    @@index([grand_prix_id])
+    @@index([date])
+    @@index([round])
+    @@index([year])
 }
 
 model race_constructor_standing {
-  race_id                Int
-  position_display_order Int
-  position_number        Int?
-  position_text          String
-  constructor_id         String
-  engine_manufacturer_id String
-  points                 Decimal
-  positions_gained       Int?
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  race                   race                @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race_id                Int
+    position_display_order Int
+    position_number        Int?
+    position_text          String
+    constructor_id         String
+    engine_manufacturer_id String
+    points                 Decimal
+    positions_gained       Int?
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race                   race                @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([race_id, position_display_order])
-  @@index([engine_manufacturer_id], map: "racs_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "racs_constructor_id_idx")
-  @@index([position_text], map: "racs_position_text_idx")
-  @@index([position_number], map: "racs_position_number_idx")
-  @@index([position_display_order], map: "racs_position_display_order_idx")
-  @@index([race_id], map: "racs_race_id_idx")
+    @@id([race_id, position_display_order])
+    @@index([engine_manufacturer_id], map: "racs_engine_manufacturer_id_idx")
+    @@index([constructor_id], map: "racs_constructor_id_idx")
+    @@index([position_text], map: "racs_position_text_idx")
+    @@index([position_number], map: "racs_position_number_idx")
+    @@index([position_display_order], map: "racs_position_display_order_idx")
+    @@index([race_id], map: "racs_race_id_idx")
 }
 
 model race_data {
-  race_id                                       Int
-  type                                          String
-  position_display_order                        Int
-  position_number                               Int?
-  position_text                                 String
-  driver_number                                 String
-  driver_id                                     String
-  constructor_id                                String
-  engine_manufacturer_id                        String
-  tyre_manufacturer_id                          String
-  practice_time                                 String?
-  practice_time_millis                          Int?
-  practice_gap                                  String?
-  practice_gap_millis                           Int?
-  practice_interval                             String?
-  practice_interval_millis                      Int?
-  practice_laps                                 Int?
-  qualifying_time                               String?
-  qualifying_time_millis                        Int?
-  qualifying_q1                                 String?
-  qualifying_q1_millis                          Int?
-  qualifying_q2                                 String?
-  qualifying_q2_millis                          Int?
-  qualifying_q3                                 String?
-  qualifying_q3_millis                          Int?
-  qualifying_gap                                String?
-  qualifying_gap_millis                         Int?
-  qualifying_interval                           String?
-  qualifying_interval_millis                    Int?
-  qualifying_laps                               Int?
-  starting_grid_position_grid_penalty           String?
-  starting_grid_position_grid_penalty_positions Int?
-  starting_grid_position_time                   String?
-  starting_grid_position_time_millis            Int?
-  race_shared_car                               Boolean?
-  race_laps                                     Int?
-  race_time                                     String?
-  race_time_millis                              Int?
-  race_time_penalty                             String?
-  race_time_penalty_millis                      Int?
-  race_gap                                      String?
-  race_gap_millis                               Int?
-  race_gap_laps                                 Int?
-  race_interval                                 String?
-  race_interval_millis                          Int?
-  race_reason_retired                           String?
-  race_points                                   Decimal?
-  race_grid_position_number                     Int?
-  race_grid_position_text                       String?
-  race_positions_gained                         Int?
-  race_pit_stops                                Int?
-  race_fastest_lap                              Boolean?
-  race_driver_of_the_day                        Boolean?
-  race_grand_slam                               Boolean?
-  fastest_lap_lap                               Int?
-  fastest_lap_time                              String?
-  fastest_lap_time_millis                       Int?
-  fastest_lap_gap                               String?
-  fastest_lap_gap_millis                        Int?
-  fastest_lap_interval                          String?
-  fastest_lap_interval_millis                   Int?
-  pit_stop_stop                                 Int?
-  pit_stop_lap                                  Int?
-  pit_stop_time                                 String?
-  pit_stop_time_millis                          Int?
-  driver_of_the_day_percentage                  Decimal?
-  tyre_manufacturer                             tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer                           engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor                                   constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  driver                                        driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  race                                          race                @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race_id                                       Int
+    type                                          String
+    position_display_order                        Int
+    position_number                               Int?
+    position_text                                 String
+    driver_number                                 String
+    driver_id                                     String
+    constructor_id                                String
+    engine_manufacturer_id                        String
+    tyre_manufacturer_id                          String
+    practice_time                                 String?
+    practice_time_millis                          Int?
+    practice_gap                                  String?
+    practice_gap_millis                           Int?
+    practice_interval                             String?
+    practice_interval_millis                      Int?
+    practice_laps                                 Int?
+    qualifying_time                               String?
+    qualifying_time_millis                        Int?
+    qualifying_q1                                 String?
+    qualifying_q1_millis                          Int?
+    qualifying_q2                                 String?
+    qualifying_q2_millis                          Int?
+    qualifying_q3                                 String?
+    qualifying_q3_millis                          Int?
+    qualifying_gap                                String?
+    qualifying_gap_millis                         Int?
+    qualifying_interval                           String?
+    qualifying_interval_millis                    Int?
+    qualifying_laps                               Int?
+    starting_grid_position_grid_penalty           String?
+    starting_grid_position_grid_penalty_positions Int?
+    starting_grid_position_time                   String?
+    starting_grid_position_time_millis            Int?
+    race_shared_car                               Boolean?
+    race_laps                                     Int?
+    race_time                                     String?
+    race_time_millis                              Int?
+    race_time_penalty                             String?
+    race_time_penalty_millis                      Int?
+    race_gap                                      String?
+    race_gap_millis                               Int?
+    race_gap_laps                                 Int?
+    race_interval                                 String?
+    race_interval_millis                          Int?
+    race_reason_retired                           String?
+    race_points                                   Decimal?
+    race_grid_position_number                     Int?
+    race_grid_position_text                       String?
+    race_positions_gained                         Int?
+    race_pit_stops                                Int?
+    race_fastest_lap                              Boolean?
+    race_driver_of_the_day                        Boolean?
+    race_grand_slam                               Boolean?
+    fastest_lap_lap                               Int?
+    fastest_lap_time                              String?
+    fastest_lap_time_millis                       Int?
+    fastest_lap_gap                               String?
+    fastest_lap_gap_millis                        Int?
+    fastest_lap_interval                          String?
+    fastest_lap_interval_millis                   Int?
+    pit_stop_stop                                 Int?
+    pit_stop_lap                                  Int?
+    pit_stop_time                                 String?
+    pit_stop_time_millis                          Int?
+    driver_of_the_day_percentage                  Decimal?
+    tyre_manufacturer                             tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer                           engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor                                   constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver                                        driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race                                          race                @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([race_id, type, position_display_order])
-  @@index([tyre_manufacturer_id], map: "rada_tyre_manufacturer_id_idx")
-  @@index([engine_manufacturer_id], map: "rada_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "rada_constructor_id_idx")
-  @@index([driver_id], map: "rada_driver_id_idx")
-  @@index([driver_number], map: "rada_driver_number_idx")
-  @@index([position_text], map: "rada_position_text_idx")
-  @@index([position_number], map: "rada_position_number_idx")
-  @@index([type], map: "rada_type_idx")
-  @@index([race_id], map: "rada_race_id_idx")
+    @@id([race_id, type, position_display_order])
+    @@index([tyre_manufacturer_id], map: "rada_tyre_manufacturer_id_idx")
+    @@index([engine_manufacturer_id], map: "rada_engine_manufacturer_id_idx")
+    @@index([constructor_id], map: "rada_constructor_id_idx")
+    @@index([driver_id], map: "rada_driver_id_idx")
+    @@index([driver_number], map: "rada_driver_number_idx")
+    @@index([position_text], map: "rada_position_text_idx")
+    @@index([position_number], map: "rada_position_number_idx")
+    @@index([type], map: "rada_type_idx")
+    @@index([race_id], map: "rada_race_id_idx")
 }
 
 model race_driver_standing {
-  race_id                Int
-  position_display_order Int
-  position_number        Int?
-  position_text          String
-  driver_id              String
-  points                 Decimal
-  positions_gained       Int?
-  driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  race                   race    @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race_id                Int
+    position_display_order Int
+    position_number        Int?
+    position_text          String
+    driver_id              String
+    points                 Decimal
+    positions_gained       Int?
+    driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    race                   race    @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([race_id, position_display_order])
-  @@index([driver_id], map: "rads_driver_id_idx")
-  @@index([position_text], map: "rads_position_text_idx")
-  @@index([position_number], map: "rads_position_number_idx")
-  @@index([position_display_order], map: "rads_position_display_order_idx")
-  @@index([race_id], map: "rads_race_id_idx")
+    @@id([race_id, position_display_order])
+    @@index([driver_id], map: "rads_driver_id_idx")
+    @@index([position_text], map: "rads_position_text_idx")
+    @@index([position_number], map: "rads_position_number_idx")
+    @@index([position_display_order], map: "rads_position_display_order_idx")
+    @@index([race_id], map: "rads_race_id_idx")
 }
 
 model season {
-  year                             Int                                @id @default(autoincrement())
-  race                             race[]
-  season_constructor_standing      season_constructor_standing[]
-  season_driver_standing           season_driver_standing[]
-  season_entrant                   season_entrant[]
-  season_entrant_constructor       season_entrant_constructor[]
-  season_entrant_driver            season_entrant_driver[]
-  season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
+    year                             Int                                @id @default(autoincrement())
+    race                             race[]
+    season_constructor_standing      season_constructor_standing[]
+    season_driver_standing           season_driver_standing[]
+    season_entrant                   season_entrant[]
+    season_entrant_constructor       season_entrant_constructor[]
+    season_entrant_driver            season_entrant_driver[]
+    season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
 }
 
 model season_constructor_standing {
-  year                   Int
-  position_display_order Int
-  position_number        Int?
-  position_text          String
-  constructor_id         String
-  engine_manufacturer_id String
-  points                 Decimal
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    year                   Int
+    position_display_order Int
+    position_number        Int?
+    position_text          String
+    constructor_id         String
+    engine_manufacturer_id String
+    points                 Decimal
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([year, position_display_order])
-  @@index([engine_manufacturer_id], map: "secs_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "secs_constructor_id_idx")
-  @@index([position_text], map: "secs_position_text_idx")
-  @@index([position_number], map: "secs_position_number_idx")
-  @@index([position_display_order], map: "secs_position_display_order_idx")
-  @@index([year], map: "secs_year_idx")
+    @@id([year, position_display_order])
+    @@index([engine_manufacturer_id], map: "secs_engine_manufacturer_id_idx")
+    @@index([constructor_id], map: "secs_constructor_id_idx")
+    @@index([position_text], map: "secs_position_text_idx")
+    @@index([position_number], map: "secs_position_number_idx")
+    @@index([position_display_order], map: "secs_position_display_order_idx")
+    @@index([year], map: "secs_year_idx")
 }
 
 model season_driver_standing {
-  year                   Int
-  position_display_order Int
-  position_number        Int?
-  position_text          String
-  driver_id              String
-  points                 Decimal
-  driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    year                   Int
+    position_display_order Int
+    position_number        Int?
+    position_text          String
+    driver_id              String
+    points                 Decimal
+    driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season                 season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([year, position_display_order])
-  @@index([driver_id], map: "seds_driver_id_idx")
-  @@index([position_text], map: "seds_position_text_idx")
-  @@index([position_number], map: "seds_position_number_idx")
-  @@index([position_display_order], map: "seds_position_display_order_idx")
-  @@index([year], map: "seds_year_idx")
+    @@id([year, position_display_order])
+    @@index([driver_id], map: "seds_driver_id_idx")
+    @@index([position_text], map: "seds_position_text_idx")
+    @@index([position_number], map: "seds_position_number_idx")
+    @@index([position_display_order], map: "seds_position_display_order_idx")
+    @@index([year], map: "seds_year_idx")
 }
 
 model season_entrant {
-  year       Int
-  entrant_id String
-  country_id String
-  country    country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant    entrant @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season     season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    year       Int
+    entrant_id String
+    country_id String
+    country    country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    entrant    entrant @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season     season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([year, entrant_id])
-  @@index([country_id], map: "seen_country_id_idx")
-  @@index([entrant_id], map: "seen_entrant_id_idx")
-  @@index([year], map: "seen_year_idx")
+    @@id([year, entrant_id])
+    @@index([country_id], map: "seen_country_id_idx")
+    @@index([entrant_id], map: "seen_entrant_id_idx")
+    @@index([year], map: "seen_year_idx")
 }
 
 model season_entrant_constructor {
-  year                   Int
-  entrant_id             String
-  constructor_id         String
-  engine_manufacturer_id String
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    year                   Int
+    entrant_id             String
+    constructor_id         String
+    engine_manufacturer_id String
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([year, entrant_id, constructor_id, engine_manufacturer_id])
-  @@index([engine_manufacturer_id], map: "seec_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "seec_constructor_id_idx")
-  @@index([entrant_id], map: "seec_entrant_id_idx")
-  @@index([year], map: "seec_year_idx")
+    @@id([year, entrant_id, constructor_id, engine_manufacturer_id])
+    @@index([engine_manufacturer_id], map: "seec_engine_manufacturer_id_idx")
+    @@index([constructor_id], map: "seec_constructor_id_idx")
+    @@index([entrant_id], map: "seec_entrant_id_idx")
+    @@index([year], map: "seec_year_idx")
 }
 
 model season_entrant_driver {
-  year                   Int
-  entrant_id             String
-  constructor_id         String
-  engine_manufacturer_id String
-  driver_id              String
-  rounds                 String?
-  rounds_text            String?
-  test_driver            Boolean
-  driver                 driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    year                   Int
+    entrant_id             String
+    constructor_id         String
+    engine_manufacturer_id String
+    driver_id              String
+    rounds                 String?
+    rounds_text            String?
+    test_driver            Boolean
+    driver                 driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([year, entrant_id, constructor_id, engine_manufacturer_id, driver_id])
-  @@index([driver_id], map: "seed_driver_id_idx")
-  @@index([engine_manufacturer_id], map: "seed_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "seed_constructor_id_idx")
-  @@index([entrant_id], map: "seed_entrant_id_idx")
-  @@index([year], map: "seed_year_idx")
+    @@id([year, entrant_id, constructor_id, engine_manufacturer_id, driver_id])
+    @@index([driver_id], map: "seed_driver_id_idx")
+    @@index([engine_manufacturer_id], map: "seed_engine_manufacturer_id_idx")
+    @@index([constructor_id], map: "seed_constructor_id_idx")
+    @@index([entrant_id], map: "seed_entrant_id_idx")
+    @@index([year], map: "seed_year_idx")
 }
 
 model season_entrant_tyre_manufacturer {
-  year                   Int
-  entrant_id             String
-  constructor_id         String
-  engine_manufacturer_id String
-  tyre_manufacturer_id   String
-  tyre_manufacturer      tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+    year                   Int
+    entrant_id             String
+    constructor_id         String
+    engine_manufacturer_id String
+    tyre_manufacturer_id   String
+    tyre_manufacturer      tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([year, entrant_id, constructor_id, engine_manufacturer_id, tyre_manufacturer_id])
-  @@index([tyre_manufacturer_id], map: "setm_tyre_manufacturer_id_idx")
-  @@index([engine_manufacturer_id], map: "setm_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "setm_constructor_id_idx")
-  @@index([entrant_id], map: "setm_entrant_id_idx")
-  @@index([year], map: "setm_year_idx")
+    @@id([year, entrant_id, constructor_id, engine_manufacturer_id, tyre_manufacturer_id])
+    @@index([tyre_manufacturer_id], map: "setm_tyre_manufacturer_id_idx")
+    @@index([engine_manufacturer_id], map: "setm_engine_manufacturer_id_idx")
+    @@index([constructor_id], map: "setm_constructor_id_idx")
+    @@index([entrant_id], map: "setm_entrant_id_idx")
+    @@index([year], map: "setm_year_idx")
 }
 
 model tyre_manufacturer {
-  id                               String                             @id
-  name                             String
-  country_id                       String
-  best_starting_grid_position      Int?
-  best_race_result                 Int?
-  total_race_entries               Int
-  total_race_starts                Int
-  total_race_wins                  Int
-  total_race_laps                  Int
-  total_podiums                    Int
-  total_podium_races               Int
-  total_pole_positions             Int
-  total_fastest_laps               Int
-  race_data                        race_data[]
-  season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
-  country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    id                               String                             @id
+    name                             String
+    country_id                       String
+    best_starting_grid_position      Int?
+    best_race_result                 Int?
+    total_race_entries               Int
+    total_race_starts                Int
+    total_race_wins                  Int
+    total_race_laps                  Int
+    total_podiums                    Int
+    total_podium_races               Int
+    total_pole_positions             Int
+    total_fastest_laps               Int
+    race_data                        race_data[]
+    season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
+    country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([country_id], map: "tyma_country_id_idx")
-  @@index([name], map: "tyma_name_idx")
+    @@index([country_id], map: "tyma_country_id_idx")
+    @@index([name], map: "tyma_name_idx")
 }

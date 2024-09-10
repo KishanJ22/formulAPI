@@ -1,38 +1,38 @@
 name: Build and Test
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DIRECT_URL: ${{ secrets.DIRECT_URL }}
-    strategy:
-      matrix:
-        node-version: [18.x]
+    build:
+        runs-on: ubuntu-latest
+        env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        strategy:
+            matrix:
+                node-version: [18.x]
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
-    - name: Install Dependencies
-      run: pnpm install
-    - name: Generate Prisma Client
-      run: npx prisma generate
-    - name: Build Project
-      run: pnpm build
-    - name: Start API Server
-      run: pnpm start &
-    - name: Run Tests
-      run: pnpm test
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
+            - name: Install Dependencies
+              run: pnpm install
+            - name: Generate Prisma Client
+              run: npx prisma generate
+            - name: Build Project
+              run: pnpm build
+            - name: Start API Server
+              run: pnpm start &
+            - name: Run Tests
+              run: pnpm test
