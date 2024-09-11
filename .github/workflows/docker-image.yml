@@ -16,7 +16,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag formulapi:latest
-    - name: Push the Docker image
-      run: docker push kishjet/formulapi:latest
+    - name: Build and push the Docker image
+      run: |
+        docker build . --file Dockerfile --tag kishjet/formulapi:latest
+        docker push kishjet/formulapi:latest
