@@ -10,7 +10,8 @@
         "test:integration": "vitest integration",
         "build": "tsc -b",
         "start": "node dist/index.js",
-        "dev": "nodemon src/index.ts"
+        "dev": "nodemon src/index.ts",
+        "postinstall": "pnpm prisma generate"
     },
     "repository": {
         "type": "git",
