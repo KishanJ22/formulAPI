@@ -12,10 +12,11 @@ jobs:
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             DIRECT_URL: ${{ secrets.DIRECT_URL }}
+            APP_PORT: ${{ secrets.APP_PORT }}
+            APP_URL: ${{ secrets.APP_URL }}
         strategy:
             matrix:
                 node-version: [18.x]
-
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
@@ -32,7 +33,5 @@ jobs:
               run: npx prisma generate
             - name: Build Project
               run: pnpm build
-            - name: Start API Server
-              run: pnpm start &
             - name: Run Tests
               run: pnpm test
