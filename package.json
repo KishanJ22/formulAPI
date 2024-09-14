@@ -1,28 +1,28 @@
 {
-    "name": "api-practice",
-    "version": "1.1.0",
+    "name": "formulapi",
+    "version": "0.1.0",
     "description": "",
     "main": "index.js",
     "scripts": {
+        "build": "tsc -b",
+        "postinstall": "pnpm prisma generate",
+        "start": "node dist/index.js",
+        "dev": "nodemon src/index.ts",
         "test": "vitest",
         "test:unit": "vitest core",
         "test:router": "vitest router",
-        "test:integration": "vitest integration",
-        "build": "tsc -b",
-        "start": "node dist/index.js",
-        "dev": "nodemon src/index.ts",
-        "postinstall": "npx prisma generate"
+        "test:integration": "vitest integration"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/KishanJ22/api-practice.git"
+        "url": "git+https://github.com/KishanJ22/formulAPI.git"
     },
     "author": "Kishan Jethwa",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/KishanJ22/api-practice/issues"
+        "url": "https://github.com/KishanJ22/formulAPI/issues"
     },
-    "homepage": "https://github.com/KishanJ22/api-practice#readme",
+    "homepage": "https://github.com/KishanJ22/formulAPI#readme",
     "dependencies": {
         "@prisma/client": "^5.18.0",
         "axios": "^1.7.4",

@@ -10,8 +10,6 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm prisma generate
-
 RUN pnpm build
 
 RUN mkdir -p /usr/src/app/node_modules/.vite && chown -R node:node /usr/src/app/node_modules
