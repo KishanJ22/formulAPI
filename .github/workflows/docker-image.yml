@@ -28,6 +28,8 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
     - uses: actions/checkout@v4
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
     - name: Login to Docker
       uses: docker/login-action@v3
       with:
@@ -35,5 +37,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Pull the Docker image
       run: docker pull kishjet/formulapi:latest
-    - name: Run the test suite on the docker image with the DATABASE_URL environment variable
-      run: docker run -p 3000:3000 -e DATABASE_URL=$DATABASE_URL kishjet/formulapi:latest pnpm start & pnpm test
+    - name: Run the test suite on the docker image
+      run: docker run -e DATABASE_URL=$DATABASE_URL kishjet/formulapi:latest pnpm start & pnpm test
