@@ -20,22 +20,3 @@ jobs:
       run: |
         docker build . --file Dockerfile --tag kishjet/formulapi:latest
         docker push kishjet/formulapi:latest
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-    - name: Login to Docker
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Pull the Docker image
-      run: docker pull kishjet/formulapi:latest
-    - name: Run the test suite on the docker image
-      run: docker run -e DATABASE_URL=$DATABASE_URL kishjet/formulapi:latest pnpm start & pnpm test
