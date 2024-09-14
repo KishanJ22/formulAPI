@@ -4,6 +4,8 @@ FROM node:${NODE_VERSION}-alpine AS base
 
 WORKDIR /usr/src/app
 
+COPY prisma ./prisma/
+
 COPY package.json pnpm-lock.yaml ./
 
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
