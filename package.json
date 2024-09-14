@@ -8,10 +8,10 @@
         "postinstall": "pnpm prisma generate",
         "start": "node dist/index.js",
         "dev": "nodemon src/index.ts",
-        "test": "vitest",
-        "test:unit": "vitest core",
-        "test:router": "vitest router",
-        "test:integration": "vitest integration"
+        "test": "vitest run",
+        "test:unit": "vitest run core",
+        "test:router": "vitest run router",
+        "test:integration": "vitest run integration"
     },
     "repository": {
         "type": "git",

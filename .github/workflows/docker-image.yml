@@ -22,7 +22,10 @@ jobs:
         docker push kishjet/formulapi:latest
 
   test:
+    needs: build
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
     - uses: actions/checkout@v4
     - name: Login to Docker
@@ -32,5 +35,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Pull the Docker image
       run: docker pull kishjet/formulapi:latest
-    - name: Run test suite on the Docker image
-      run: docker run kishjet/formulapi:latest pnpm start && pnpm test
+    - name: Run the test suite on the docker image with the DATABASE_URL environment variable
+      run: docker run -p 3000:3000 -e DATABASE_URL=$DATABASE_URL kishjet/formulapi:latest pnpm start & pnpm test
