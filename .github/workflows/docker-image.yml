@@ -33,4 +33,4 @@ jobs:
     - name: Pull the Docker image
       run: docker pull kishjet/formulapi:latest
     - name: Run test suite on the Docker image
-      run: docker run -d -p 3000:3000 kishjet/formulapi:latest pnpm test
+      run: docker run kishjet/formulapi:latest pnpm test
