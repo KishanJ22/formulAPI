@@ -9,11 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DIRECT_URL: ${{ secrets.DIRECT_URL }}
-      APP_PORT: ${{ secrets.APP_PORT }}
-      APP_URL: ${{ secrets.APP_URL }}
     steps:
     - uses: actions/checkout@v4
     - name: Login to Docker
@@ -28,6 +23,11 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      APP_PORT: ${{ secrets.APP_PORT }}
+      APP_URL: ${{ secrets.APP_URL }}
     steps:
       - uses: actions/checkout@v4
       - name: Pull the Docker image
