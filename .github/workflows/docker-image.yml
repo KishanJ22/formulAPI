@@ -29,7 +29,6 @@ jobs:
       APP_PORT: ${{ secrets.APP_PORT }}
       APP_URL: ${{ secrets.APP_URL }}
     steps:
-      - uses: actions/checkout@v4
       - name: Pull the Docker image
         run: docker pull kishjet/formulapi:latest
       - name: Run tests
