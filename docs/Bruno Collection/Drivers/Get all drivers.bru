@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/drivers?total_championship_wins=7
+  url: {{BASE_URL}}/drivers
   body: none
   auth: none
 }
 
 params:query {
-  total_championship_wins: 7
+  ~total_championship_wins: 7
   ~id: 
   ~name: 
   ~first_name: 

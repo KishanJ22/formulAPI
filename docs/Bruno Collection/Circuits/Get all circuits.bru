@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: http://localhost:3000/circuits
+  url: {{BASE_URL}}/circuits
   body: none
   auth: none
 }
@@ -25,5 +25,5 @@ params:query {
 
 assert {
   res.status: eq 200
-  res.body: isArray 
+  res.body: isArray
 }
