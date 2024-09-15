@@ -71,8 +71,7 @@ export const getAllDrivers = async (searchQuery?: any): Promise<Driver[]> => {
 
     if(searchQuery) {
         if(!await validateKeys(searchQuery)) throw new Error("Invalid Search Query");
-        let filteredDrivers: Driver[];
-        filteredDrivers = allDrivers.filter((driver: Driver) => {
+        const filteredDrivers: Driver[] = allDrivers.filter((driver: Driver) => {
             return Object.keys(searchQuery).every((key) => {
                 if (key === "total_race_entries" || key === "total_race_starts" || key === "total_race_wins" || key === "total_race_laps" || key === "total_podiums" || key === "total_championship_wins" || key === "best_championship_position" || key === "best_starting_grid_position" || key === "best_race_result" || key === "total_pole_positions" || key === "total_fastest_laps" || key === "total_driver_of_the_day" || key === "total_grand_slams") {
                     return driver[key] == searchQuery[key];
@@ -97,9 +96,10 @@ const validateKeys = async (searchQuery: any): Promise<boolean> => {
 
 export const getOneDriver = async (driverId: string): Promise<Driver> => {
     const drivers: Driver[] = await getAllDrivers();
-    const driver: Driver = drivers.find((driver) => driver.id === driverId)!;
+    const driver: Driver | undefined = drivers.find((driver) => driver.id === driverId);
     if (driver) {
         return driver;
+    } else {
+        throw new Error("No Driver Found");
     }
-    else throw new Error("No Driver Found");
 };

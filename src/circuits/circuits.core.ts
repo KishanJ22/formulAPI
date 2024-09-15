@@ -34,8 +34,7 @@ export const getAllCircuits = async (searchQuery?: any): Promise<Circuit[]> => {
 
     if(searchQuery) {
         if(!await validateKeys(searchQuery)) throw new Error("Invalid Search Query");
-        let filteredCircuits: Circuit[];
-        filteredCircuits = allCircuits.filter((circuit) => {
+        const filteredCircuits: Circuit[] = allCircuits.filter((circuit) => {
             return Object.keys(searchQuery).every((key) => {
                 if(key === "total_races_held") {
                 return circuit[key] === searchQuery[key];
