@@ -9,7 +9,7 @@ export const driverRouter = (app: Router) => {
     router.get("/", async (req: Request, res: Response) => {
         let drivers;
         try {
-            if(Object.keys(req.query).length > 0) {
+            if (Object.keys(req.query).length > 0) {
                 const searchQuery: any = req.query;
                 drivers = await getAllDrivers(searchQuery);
             } else {
@@ -37,7 +37,7 @@ export const driverRouter = (app: Router) => {
                 res.status(404).send({ message: "No Driver Found" });
             } else {
                 res.status(500).send({ message: "Something went wrong" });
-            };
+            }
         }
         res.status(200).send(driver);
     });
