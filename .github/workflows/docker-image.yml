@@ -9,6 +9,11 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            DIRECT_URL: ${{ secrets.DIRECT_URL }}
+            APP_PORT: ${{ secrets.APP_PORT }}
+            APP_URL: ${{ secrets.APP_URL }}
         steps:
             - uses: actions/checkout@v4
             - name: Login to Docker
@@ -17,20 +22,8 @@ jobs:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
             - name: Build and push the Docker image
-              run: |
-                  docker build . --file Dockerfile --tag kishjet/formulapi:latest
-                  docker push kishjet/formulapi:latest
-    test:
-        needs: build
-        runs-on: ubuntu-latest
-        env:
-            DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            DIRECT_URL: ${{ secrets.DIRECT_URL }}
-            APP_PORT: ${{ secrets.APP_PORT }}
-            APP_URL: ${{ secrets.APP_URL }}
-        steps:
-            - name: Pull the Docker image
-              run: docker pull kishjet/formulapi:latest
+              run: docker build . --file Dockerfile --tag kishjet/formulapi:latest
             - name: Run tests
-              run: |
-                  docker run -e DATABASE_URL=$DATABASE_URL -e DIRECT_URL=$DIRECT_URL -e APP_PORT=$APP_PORT -e APP_URL=$APP_URL kishjet/formulapi:latest pnpm test
+              run: docker run -e DATABASE_URL=$DATABASE_URL -e DIRECT_URL=$DIRECT_URL -e APP_PORT=$APP_PORT -e APP_URL=$APP_URL kishjet/formulapi:latest pnpm test
+            - name: Push the Docker image
+              run:  docker push kishjet/formulapi:latest
