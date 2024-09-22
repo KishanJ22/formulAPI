@@ -16,7 +16,7 @@ app.get("/health", (req: Request, res: Response) => {
     });
 });
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV !== "test") {
     app.listen(APP_PORT, () => {
         console.log(`App listening on port ${APP_PORT}`);
     });
