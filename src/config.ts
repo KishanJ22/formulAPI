@@ -1,2 +1,2 @@
-export const APP_PORT = process.env.PORT || 3000;
-export const appUrl = process.env.APP_URL;
+export const APP_PORT = process.env.APP_PORT || 3000;
+export const APP_URL = process.env.APP_URL;
