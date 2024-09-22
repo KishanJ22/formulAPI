@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { driverRouter } from "./drivers/drivers.router";
 import { circuitRouter } from "./circuits/circuits.router";
-import { PORT } from "./config";
+import { APP_PORT } from "./config";
 
 const app = express();
 
@@ -16,11 +16,11 @@ app.get("/health", (req: Request, res: Response) => {
     });
 });
 
-if (process.env.NODE_ENV !== "test") {
-    app.listen(PORT, () => {
-        console.log(`App listening on port ${PORT}`);
+if (process.env.NODE_ENV === "development") {
+    app.listen(APP_PORT, () => {
+        console.log(`App listening on port ${APP_PORT}`);
     });
-};
+}
 
 driverRouter(app);
 circuitRouter(app);
