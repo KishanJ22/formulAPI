@@ -12,7 +12,8 @@
         "test": "vitest run",
         "test:unit": "vitest run core",
         "test:router": "vitest run router",
-        "test:integration": "vitest run integration"
+        "test:integration": "vitest run integration",
+        "test:ui": "vitest --ui --coverage"
     },
     "repository": {
         "type": "git",
