@@ -1,24 +1,26 @@
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "debian-openssl-3.0.x"]
+    provider        = "prisma-client-js"
+    previewFeatures = ["multiSchema"]
+    binaryTargets   = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
     provider  = "postgresql"
     url       = env("DATABASE_URL")
     directUrl = env("DIRECT_URL")
+    schemas   = ["auth", "pgsodium", "public", "vault"]
 }
 
 model circuit {
-    id               String  @id
-    name             String
-    full_name        String
-    previous_names   String?
-    type             String
-    place_name       String
-    country_id       String
-    latitude         Decimal
-    longitude        Decimal
+    id               String  @id @db.VarChar(100)
+    name             String  @db.VarChar(100)
+    full_name        String  @db.VarChar(100)
+    previous_names   String? @db.VarChar(255)
+    type             String  @db.VarChar(6)
+    place_name       String  @db.VarChar(100)
+    country_id       String  @db.VarChar(100)
+    latitude         Decimal @db.Decimal(10, 6)
+    longitude        Decimal @db.Decimal(10, 6)
     total_races_held Int
     country          country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     race             race[]
@@ -28,13 +30,14 @@ model circuit {
     @@index([type], map: "circ_type_idx")
     @@index([full_name], map: "circ_full_name_idx")
     @@index([name], map: "circ_name_idx")
+    @@schema("public")
 }
 
 model constructor {
-    id                                                                                                                    String                                  @id
-    name                                                                                                                  String
-    full_name                                                                                                             String
-    country_id                                                                                                            String
+    id                                                                                                                    String                                  @id @db.VarChar(100)
+    name                                                                                                                  String                                  @db.VarChar(100)
+    full_name                                                                                                             String                                  @db.VarChar(100)
+    country_id                                                                                                            String                                  @db.VarChar(100)
     best_championship_position                                                                                            Int?
     best_starting_grid_position                                                                                           Int?
     best_race_result                                                                                                      Int?
@@ -46,7 +49,7 @@ model constructor {
     total_race_laps                                                                                                       Int
     total_podiums                                                                                                         Int
     total_podium_races                                                                                                    Int
-    total_championship_points                                                                                             Decimal
+    total_championship_points                                                                                             Decimal                                 @db.Decimal(8, 2)
     total_pole_positions                                                                                                  Int
     total_fastest_laps                                                                                                    Int
     country                                                                                                               country                                 @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -62,65 +65,70 @@ model constructor {
     @@index([country_id], map: "cons_country_id_idx")
     @@index([full_name], map: "cons_full_name_idx")
     @@index([name], map: "cons_name_idx")
+    @@schema("public")
 }
 
 model constructor_previous_next_constructor {
-    constructor_id                                                                              String
-    previous_next_constructor_id                                                                String
+    constructor_id                                                                              String      @db.VarChar(100)
+    previous_next_constructor_id                                                                String      @db.VarChar(100)
     year_from                                                                                   Int
     year_to                                                                                     Int?
-    constructor_constructor_previous_next_constructor_previous_next_constructor_idToconstructor constructor @relation("constructor_previous_next_constructor_previous_next_constructor_idToconstructor", fields: [previous_next_constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    constructor_constructor_previous_next_constructor_previous_next_constructor_idToconstructor constructor @relation("constructor_previous_next_constructor_previous_next_constructor_idToconstructor", fields: [previous_next_constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "constructor_previous_next_con_previous_next_constructor_id_fkey")
     constructor_constructor_previous_next_constructor_constructor_idToconstructor               constructor @relation("constructor_previous_next_constructor_constructor_idToconstructor", fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@id([constructor_id, previous_next_constructor_id, year_from])
     @@index([previous_next_constructor_id], map: "cpnc_previous_next_constructor_id_idx")
     @@index([constructor_id], map: "cpnc_constructor_id_idx")
+    @@schema("public")
 }
 
 model continent {
-    id      String    @id
-    code    String    @unique(map: "sqlite_autoindex_continent_2")
-    name    String    @unique(map: "sqlite_autoindex_continent_3")
-    demonym String
+    id      String    @id @db.VarChar(100)
+    code    String    @unique @db.VarChar(2)
+    name    String    @unique @db.VarChar(100)
+    demonym String    @db.VarChar(100)
     country country[]
+
+    @@schema("public")
 }
 
 model country {
-    id                                                   String                @id
-    alpha2_code                                          String                @unique(map: "sqlite_autoindex_country_2")
-    alpha3_code                                          String                @unique(map: "sqlite_autoindex_country_3")
-    name                                                 String                @unique(map: "sqlite_autoindex_country_4")
-    demonym                                              String?
-    continent_id                                         String
+    id                                                   String                @id @db.VarChar(100)
+    alpha2_code                                          String                @unique @db.VarChar(2)
+    alpha3_code                                          String                @unique @db.VarChar(3)
+    name                                                 String                @unique @db.VarChar(100)
+    demonym                                              String?               @db.VarChar(100)
+    continent_id                                         String                @db.VarChar(100)
     circuit                                              circuit[]
     constructor                                          constructor[]
     continent                                            continent             @relation(fields: [continent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    driver_driver_second_nationality_country_idTocountry driver[]              @relation("driver_second_nationality_country_idTocountry")
-    driver_driver_nationality_country_idTocountry        driver[]              @relation("driver_nationality_country_idTocountry")
     driver_driver_country_of_birth_country_idTocountry   driver[]              @relation("driver_country_of_birth_country_idTocountry")
+    driver_driver_nationality_country_idTocountry        driver[]              @relation("driver_nationality_country_idTocountry")
+    driver_driver_second_nationality_country_idTocountry driver[]              @relation("driver_second_nationality_country_idTocountry")
     engine_manufacturer                                  engine_manufacturer[]
     grand_prix                                           grand_prix[]
     season_entrant                                       season_entrant[]
     tyre_manufacturer                                    tyre_manufacturer[]
 
     @@index([continent_id], map: "coun_continent_id_idx")
+    @@schema("public")
 }
 
 model driver {
-    id                                                                            String                       @id
-    name                                                                          String
-    first_name                                                                    String
-    last_name                                                                     String
-    full_name                                                                     String
-    abbreviation                                                                  String
-    permanent_number                                                              String?
-    gender                                                                        String
+    id                                                                            String                       @id @db.VarChar(100)
+    name                                                                          String                       @db.VarChar(100)
+    first_name                                                                    String                       @db.VarChar(100)
+    last_name                                                                     String                       @db.VarChar(100)
+    full_name                                                                     String                       @db.VarChar(100)
+    abbreviation                                                                  String                       @db.VarChar(3)
+    permanent_number                                                              String?                      @db.VarChar(2)
+    gender                                                                        String                       @db.VarChar(6)
     date_of_birth                                                                 String
     date_of_death                                                                 String?
-    place_of_birth                                                                String
-    country_of_birth_country_id                                                   String
-    nationality_country_id                                                        String
-    second_nationality_country_id                                                 String?
+    place_of_birth                                                                String                       @db.VarChar(100)
+    country_of_birth_country_id                                                   String                       @db.VarChar(100)
+    nationality_country_id                                                        String                       @db.VarChar(100)
+    second_nationality_country_id                                                 String?                      @db.VarChar(100)
     best_championship_position                                                    Int?
     best_starting_grid_position                                                   Int?
     best_race_result                                                              Int?
@@ -130,17 +138,17 @@ model driver {
     total_race_wins                                                               Int
     total_race_laps                                                               Int
     total_podiums                                                                 Int
-    total_points                                                                  Decimal
-    total_championship_points                                                     Decimal
+    total_points                                                                  Decimal                      @db.Decimal(8, 2)
+    total_championship_points                                                     Decimal                      @db.Decimal(8, 2)
     total_pole_positions                                                          Int
     total_fastest_laps                                                            Int
     total_driver_of_the_day                                                       Int
     total_grand_slams                                                             Int
-    country_driver_second_nationality_country_idTocountry                         country?                     @relation("driver_second_nationality_country_idTocountry", fields: [second_nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    country_driver_nationality_country_idTocountry                                country                      @relation("driver_nationality_country_idTocountry", fields: [nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     country_driver_country_of_birth_country_idTocountry                           country                      @relation("driver_country_of_birth_country_idTocountry", fields: [country_of_birth_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    driver_family_relationship_driver_family_relationship_other_driver_idTodriver driver_family_relationship[] @relation("driver_family_relationship_other_driver_idTodriver")
+    country_driver_nationality_country_idTocountry                                country                      @relation("driver_nationality_country_idTocountry", fields: [nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    country_driver_second_nationality_country_idTocountry                         country?                     @relation("driver_second_nationality_country_idTocountry", fields: [second_nationality_country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     driver_family_relationship_driver_family_relationship_driver_idTodriver       driver_family_relationship[] @relation("driver_family_relationship_driver_idTodriver")
+    driver_family_relationship_driver_family_relationship_other_driver_idTodriver driver_family_relationship[] @relation("driver_family_relationship_other_driver_idTodriver")
     race_data                                                                     race_data[]
     race_driver_standing                                                          race_driver_standing[]
     season_driver_standing                                                        season_driver_standing[]
@@ -159,24 +167,26 @@ model driver {
     @@index([last_name], map: "driv_last_name_idx")
     @@index([first_name], map: "driv_first_name_idx")
     @@index([name], map: "driv_name_idx")
+    @@schema("public")
 }
 
 model driver_family_relationship {
-    driver_id                                                 String
-    other_driver_id                                           String
-    type                                                      String
-    driver_driver_family_relationship_other_driver_idTodriver driver @relation("driver_family_relationship_other_driver_idTodriver", fields: [other_driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_id                                                 String @db.VarChar(100)
+    other_driver_id                                           String @db.VarChar(100)
+    type                                                      String @db.VarChar(50)
     driver_driver_family_relationship_driver_idTodriver       driver @relation("driver_family_relationship_driver_idTodriver", fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_driver_family_relationship_other_driver_idTodriver driver @relation("driver_family_relationship_other_driver_idTodriver", fields: [other_driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@id([driver_id, other_driver_id, type])
     @@index([other_driver_id], map: "drfr_other_driver_id_idx")
     @@index([driver_id], map: "drfr_driver_id_idx")
+    @@schema("public")
 }
 
 model engine_manufacturer {
-    id                               String                             @id
-    name                             String
-    country_id                       String
+    id                               String                             @id @db.VarChar(100)
+    name                             String                             @db.VarChar(100)
+    country_id                       String                             @db.VarChar(100)
     best_championship_position       Int?
     best_starting_grid_position      Int?
     best_race_result                 Int?
@@ -187,7 +197,7 @@ model engine_manufacturer {
     total_race_laps                  Int
     total_podiums                    Int
     total_podium_races               Int
-    total_championship_points        Decimal
+    total_championship_points        Decimal                            @db.Decimal(8, 2)
     total_pole_positions             Int
     total_fastest_laps               Int
     country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -200,26 +210,28 @@ model engine_manufacturer {
 
     @@index([country_id], map: "enma_country_id_idx")
     @@index([name], map: "enma_name_idx")
+    @@schema("public")
 }
 
 model entrant {
-    id                               String                             @id
-    name                             String
+    id                               String                             @id @db.VarChar(100)
+    name                             String                             @db.VarChar(100)
     season_entrant                   season_entrant[]
     season_entrant_constructor       season_entrant_constructor[]
     season_entrant_driver            season_entrant_driver[]
     season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
 
     @@index([name], map: "entr_name_idx")
+    @@schema("public")
 }
 
 model grand_prix {
-    id               String   @id
-    name             String
-    full_name        String
-    short_name       String
-    abbreviation     String
-    country_id       String?
+    id               String   @id @db.VarChar(100)
+    name             String   @db.VarChar(100)
+    full_name        String   @db.VarChar(100)
+    short_name       String   @db.VarChar(100)
+    abbreviation     String   @db.VarChar(3)
+    country_id       String?  @db.VarChar(100)
     total_races_held Int
     country          country? @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     race             race[]
@@ -229,47 +241,48 @@ model grand_prix {
     @@index([short_name], map: "grpr_short_name_idx")
     @@index([full_name], map: "grpr_full_name_idx")
     @@index([name], map: "grpr_name_idx")
+    @@schema("public")
 }
 
 model race {
-    id                        Int                         @id @default(autoincrement())
+    id                        Int                         @id
     year                      Int
     round                     Int
-    date                      DateTime
+    date                      DateTime                    @db.Date
     time                      String?
-    grand_prix_id             String
-    official_name             String
-    qualifying_format         String
-    sprint_qualifying_format  String?
-    circuit_id                String
-    circuit_type              String
-    course_length             Decimal
+    grand_prix_id             String                      @db.VarChar(100)
+    official_name             String                      @db.VarChar(100)
+    qualifying_format         String                      @db.VarChar(20)
+    sprint_qualifying_format  String?                     @db.VarChar(20)
+    circuit_id                String                      @db.VarChar(100)
+    circuit_type              String                      @db.VarChar(6)
+    course_length             Decimal                     @db.Decimal(6, 3)
     laps                      Int
-    distance                  Decimal
+    distance                  Decimal                     @db.Decimal(6, 3)
     scheduled_laps            Int?
-    scheduled_distance        Decimal?
-    pre_qualifying_date       DateTime?
-    pre_qualifying_time       String?
-    free_practice_1_date      DateTime?
-    free_practice_1_time      String?
-    free_practice_2_date      DateTime?
-    free_practice_2_time      String?
-    free_practice_3_date      DateTime?
-    free_practice_3_time      String?
-    free_practice_4_date      DateTime?
-    free_practice_4_time      String?
-    qualifying_1_date         DateTime?
-    qualifying_1_time         String?
-    qualifying_2_date         DateTime?
-    qualifying_2_time         String?
-    qualifying_date           DateTime?
-    qualifying_time           String?
-    sprint_qualifying_date    DateTime?
-    sprint_qualifying_time    String?
-    sprint_race_date          DateTime?
-    sprint_race_time          String?
-    warming_up_date           DateTime?
-    warming_up_time           String?
+    scheduled_distance        Decimal?                    @db.Decimal(6, 3)
+    pre_qualifying_date       DateTime?                   @db.Date
+    pre_qualifying_time       String?                     @db.VarChar(5)
+    free_practice_1_date      DateTime?                   @db.Date
+    free_practice_1_time      String?                     @db.VarChar(5)
+    free_practice_2_date      DateTime?                   @db.Date
+    free_practice_2_time      String?                     @db.VarChar(5)
+    free_practice_3_date      DateTime?                   @db.Date
+    free_practice_3_time      String?                     @db.VarChar(5)
+    free_practice_4_date      DateTime?                   @db.Date
+    free_practice_4_time      String?                     @db.VarChar(5)
+    qualifying_1_date         DateTime?                   @db.Date
+    qualifying_1_time         String?                     @db.VarChar(5)
+    qualifying_2_date         DateTime?                   @db.Date
+    qualifying_2_time         String?                     @db.VarChar(5)
+    qualifying_date           DateTime?                   @db.Date
+    qualifying_time           String?                     @db.VarChar(5)
+    sprint_qualifying_date    DateTime?                   @db.Date
+    sprint_qualifying_time    String?                     @db.VarChar(5)
+    sprint_race_date          DateTime?                   @db.Date
+    sprint_race_time          String?                     @db.VarChar(5)
+    warming_up_date           DateTime?                   @db.Date
+    warming_up_time           String?                     @db.VarChar(5)
     circuit                   circuit                     @relation(fields: [circuit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     grand_prix                grand_prix                  @relation(fields: [grand_prix_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season                    season                      @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
@@ -277,26 +290,27 @@ model race {
     race_data                 race_data[]
     race_driver_standing      race_driver_standing[]
 
-    @@unique([year, round], map: "sqlite_autoindex_race_1")
+    @@unique([year, round])
     @@index([circuit_id])
     @@index([official_name])
     @@index([grand_prix_id])
     @@index([date])
     @@index([round])
     @@index([year])
+    @@schema("public")
 }
 
 model race_constructor_standing {
     race_id                Int
     position_display_order Int
     position_number        Int?
-    position_text          String
-    constructor_id         String
-    engine_manufacturer_id String
-    points                 Decimal
+    position_text          String              @db.VarChar(4)
+    constructor_id         String              @db.VarChar(100)
+    engine_manufacturer_id String              @db.VarChar(100)
+    points                 Decimal             @db.Decimal(8, 2)
     positions_gained       Int?
-    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     race                   race                @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@id([race_id, position_display_order])
@@ -306,80 +320,81 @@ model race_constructor_standing {
     @@index([position_number], map: "racs_position_number_idx")
     @@index([position_display_order], map: "racs_position_display_order_idx")
     @@index([race_id], map: "racs_race_id_idx")
+    @@schema("public")
 }
 
 model race_data {
     race_id                                       Int
-    type                                          String
+    type                                          String              @db.VarChar(50)
     position_display_order                        Int
     position_number                               Int?
-    position_text                                 String
-    driver_number                                 String
-    driver_id                                     String
-    constructor_id                                String
-    engine_manufacturer_id                        String
-    tyre_manufacturer_id                          String
-    practice_time                                 String?
+    position_text                                 String              @db.VarChar(4)
+    driver_number                                 String              @db.VarChar(3)
+    driver_id                                     String              @db.VarChar(100)
+    constructor_id                                String              @db.VarChar(100)
+    engine_manufacturer_id                        String              @db.VarChar(100)
+    tyre_manufacturer_id                          String              @db.VarChar(100)
+    practice_time                                 String?             @db.VarChar(20)
     practice_time_millis                          Int?
-    practice_gap                                  String?
+    practice_gap                                  String?             @db.VarChar(20)
     practice_gap_millis                           Int?
-    practice_interval                             String?
+    practice_interval                             String?             @db.VarChar(20)
     practice_interval_millis                      Int?
     practice_laps                                 Int?
-    qualifying_time                               String?
+    qualifying_time                               String?             @db.VarChar(20)
     qualifying_time_millis                        Int?
-    qualifying_q1                                 String?
+    qualifying_q1                                 String?             @db.VarChar(20)
     qualifying_q1_millis                          Int?
-    qualifying_q2                                 String?
+    qualifying_q2                                 String?             @db.VarChar(20)
     qualifying_q2_millis                          Int?
-    qualifying_q3                                 String?
+    qualifying_q3                                 String?             @db.VarChar(20)
     qualifying_q3_millis                          Int?
-    qualifying_gap                                String?
+    qualifying_gap                                String?             @db.VarChar(20)
     qualifying_gap_millis                         Int?
-    qualifying_interval                           String?
+    qualifying_interval                           String?             @db.VarChar(20)
     qualifying_interval_millis                    Int?
     qualifying_laps                               Int?
-    starting_grid_position_grid_penalty           String?
+    starting_grid_position_grid_penalty           String?             @db.VarChar(20)
     starting_grid_position_grid_penalty_positions Int?
-    starting_grid_position_time                   String?
+    starting_grid_position_time                   String?             @db.VarChar(20)
     starting_grid_position_time_millis            Int?
     race_shared_car                               Boolean?
     race_laps                                     Int?
-    race_time                                     String?
+    race_time                                     String?             @db.VarChar(20)
     race_time_millis                              Int?
-    race_time_penalty                             String?
+    race_time_penalty                             String?             @db.VarChar(20)
     race_time_penalty_millis                      Int?
-    race_gap                                      String?
+    race_gap                                      String?             @db.VarChar(20)
     race_gap_millis                               Int?
     race_gap_laps                                 Int?
-    race_interval                                 String?
+    race_interval                                 String?             @db.VarChar(20)
     race_interval_millis                          Int?
-    race_reason_retired                           String?
-    race_points                                   Decimal?
+    race_reason_retired                           String?             @db.VarChar(100)
+    race_points                                   Decimal?            @db.Decimal(8, 2)
     race_grid_position_number                     Int?
-    race_grid_position_text                       String?
+    race_grid_position_text                       String?             @db.VarChar(2)
     race_positions_gained                         Int?
     race_pit_stops                                Int?
     race_fastest_lap                              Boolean?
     race_driver_of_the_day                        Boolean?
     race_grand_slam                               Boolean?
     fastest_lap_lap                               Int?
-    fastest_lap_time                              String?
+    fastest_lap_time                              String?             @db.VarChar(20)
     fastest_lap_time_millis                       Int?
-    fastest_lap_gap                               String?
+    fastest_lap_gap                               String?             @db.VarChar(20)
     fastest_lap_gap_millis                        Int?
-    fastest_lap_interval                          String?
+    fastest_lap_interval                          String?             @db.VarChar(20)
     fastest_lap_interval_millis                   Int?
     pit_stop_stop                                 Int?
     pit_stop_lap                                  Int?
-    pit_stop_time                                 String?
+    pit_stop_time                                 String?             @db.VarChar(20)
     pit_stop_time_millis                          Int?
-    driver_of_the_day_percentage                  Decimal?
-    tyre_manufacturer                             tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    engine_manufacturer                           engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    driver_of_the_day_percentage                  Decimal?            @db.Decimal(4, 1)
     constructor                                   constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     driver                                        driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer                           engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     race                                          race                @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    tyre_manufacturer                             tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@id([race_id, type, position_display_order])
     @@index([tyre_manufacturer_id], map: "rada_tyre_manufacturer_id_idx")
@@ -391,15 +406,16 @@ model race_data {
     @@index([position_number], map: "rada_position_number_idx")
     @@index([type], map: "rada_type_idx")
     @@index([race_id], map: "rada_race_id_idx")
+    @@schema("public")
 }
 
 model race_driver_standing {
     race_id                Int
     position_display_order Int
     position_number        Int?
-    position_text          String
-    driver_id              String
-    points                 Decimal
+    position_text          String  @db.VarChar(4)
+    driver_id              String  @db.VarChar(100)
+    points                 Decimal @db.Decimal(8, 2)
     positions_gained       Int?
     driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     race                   race    @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -410,10 +426,11 @@ model race_driver_standing {
     @@index([position_number], map: "rads_position_number_idx")
     @@index([position_display_order], map: "rads_position_display_order_idx")
     @@index([race_id], map: "rads_race_id_idx")
+    @@schema("public")
 }
 
 model season {
-    year                             Int                                @id @default(autoincrement())
+    year                             Int                                @id
     race                             race[]
     season_constructor_standing      season_constructor_standing[]
     season_driver_standing           season_driver_standing[]
@@ -421,18 +438,20 @@ model season {
     season_entrant_constructor       season_entrant_constructor[]
     season_entrant_driver            season_entrant_driver[]
     season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
+
+    @@schema("public")
 }
 
 model season_constructor_standing {
     year                   Int
     position_display_order Int
     position_number        Int?
-    position_text          String
-    constructor_id         String
-    engine_manufacturer_id String
-    points                 Decimal
-    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    position_text          String              @db.VarChar(4)
+    constructor_id         String              @db.VarChar(100)
+    engine_manufacturer_id String              @db.VarChar(100)
+    points                 Decimal             @db.Decimal(8, 2)
     constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
     @@id([year, position_display_order])
@@ -442,15 +461,16 @@ model season_constructor_standing {
     @@index([position_number], map: "secs_position_number_idx")
     @@index([position_display_order], map: "secs_position_display_order_idx")
     @@index([year], map: "secs_year_idx")
+    @@schema("public")
 }
 
 model season_driver_standing {
     year                   Int
     position_display_order Int
     position_number        Int?
-    position_text          String
-    driver_id              String
-    points                 Decimal
+    position_text          String  @db.VarChar(4)
+    driver_id              String  @db.VarChar(100)
+    points                 Decimal @db.Decimal(8, 2)
     driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season                 season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
@@ -460,12 +480,13 @@ model season_driver_standing {
     @@index([position_number], map: "seds_position_number_idx")
     @@index([position_display_order], map: "seds_position_display_order_idx")
     @@index([year], map: "seds_year_idx")
+    @@schema("public")
 }
 
 model season_entrant {
     year       Int
-    entrant_id String
-    country_id String
+    entrant_id String  @db.VarChar(100)
+    country_id String  @db.VarChar(100)
     country    country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     entrant    entrant @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season     season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
@@ -474,15 +495,16 @@ model season_entrant {
     @@index([country_id], map: "seen_country_id_idx")
     @@index([entrant_id], map: "seen_entrant_id_idx")
     @@index([year], map: "seen_year_idx")
+    @@schema("public")
 }
 
 model season_entrant_constructor {
     year                   Int
-    entrant_id             String
-    constructor_id         String
-    engine_manufacturer_id String
-    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    entrant_id             String              @db.VarChar(100)
+    constructor_id         String              @db.VarChar(100)
+    engine_manufacturer_id String              @db.VarChar(100)
     constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
@@ -491,20 +513,21 @@ model season_entrant_constructor {
     @@index([constructor_id], map: "seec_constructor_id_idx")
     @@index([entrant_id], map: "seec_entrant_id_idx")
     @@index([year], map: "seec_year_idx")
+    @@schema("public")
 }
 
 model season_entrant_driver {
     year                   Int
-    entrant_id             String
-    constructor_id         String
-    engine_manufacturer_id String
-    driver_id              String
-    rounds                 String?
-    rounds_text            String?
+    entrant_id             String              @db.VarChar(100)
+    constructor_id         String              @db.VarChar(100)
+    engine_manufacturer_id String              @db.VarChar(100)
+    driver_id              String              @db.VarChar(100)
+    rounds                 String?             @db.VarChar(100)
+    rounds_text            String?             @db.VarChar(100)
     test_driver            Boolean
+    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     driver                 driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
@@ -514,18 +537,19 @@ model season_entrant_driver {
     @@index([constructor_id], map: "seed_constructor_id_idx")
     @@index([entrant_id], map: "seed_entrant_id_idx")
     @@index([year], map: "seed_year_idx")
+    @@schema("public")
 }
 
 model season_entrant_tyre_manufacturer {
     year                   Int
-    entrant_id             String
-    constructor_id         String
-    engine_manufacturer_id String
-    tyre_manufacturer_id   String
-    tyre_manufacturer      tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    entrant_id             String              @db.VarChar(100)
+    constructor_id         String              @db.VarChar(100)
+    engine_manufacturer_id String              @db.VarChar(100)
+    tyre_manufacturer_id   String              @db.VarChar(100)
     constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    tyre_manufacturer      tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
 
     @@id([year, entrant_id, constructor_id, engine_manufacturer_id, tyre_manufacturer_id])
@@ -534,12 +558,13 @@ model season_entrant_tyre_manufacturer {
     @@index([constructor_id], map: "setm_constructor_id_idx")
     @@index([entrant_id], map: "setm_entrant_id_idx")
     @@index([year], map: "setm_year_idx")
+    @@schema("public")
 }
 
 model tyre_manufacturer {
-    id                               String                             @id
-    name                             String
-    country_id                       String
+    id                               String                             @id @db.VarChar(100)
+    name                             String                             @db.VarChar(100)
+    country_id                       String                             @db.VarChar(100)
     best_starting_grid_position      Int?
     best_race_result                 Int?
     total_race_entries               Int
@@ -556,4 +581,445 @@ model tyre_manufacturer {
 
     @@index([country_id], map: "tyma_country_id_idx")
     @@index([name], map: "tyma_name_idx")
+    @@schema("public")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model audit_log_entries {
+    instance_id String?   @db.Uuid
+    id          String    @id @db.Uuid
+    payload     Json?     @db.Json
+    created_at  DateTime? @db.Timestamptz(6)
+    ip_address  String    @default("") @db.VarChar(64)
+
+    @@index([instance_id], map: "audit_logs_instance_id_idx")
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model flow_state {
+    id                     String                @id @db.Uuid
+    user_id                String?               @db.Uuid
+    auth_code              String
+    code_challenge_method  code_challenge_method
+    code_challenge         String
+    provider_type          String
+    provider_access_token  String?
+    provider_refresh_token String?
+    created_at             DateTime?             @db.Timestamptz(6)
+    updated_at             DateTime?             @db.Timestamptz(6)
+    authentication_method  String
+    auth_code_issued_at    DateTime?             @db.Timestamptz(6)
+    saml_relay_states      saml_relay_states[]
+
+    @@index([created_at(sort: Desc)])
+    @@index([auth_code], map: "idx_auth_code")
+    @@index([user_id, authentication_method], map: "idx_user_id_auth_method")
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model identities {
+    provider_id     String
+    user_id         String     @db.Uuid
+    identity_data   Json
+    provider        String
+    last_sign_in_at DateTime?  @db.Timestamptz(6)
+    created_at      DateTime?  @db.Timestamptz(6)
+    updated_at      DateTime?  @db.Timestamptz(6)
+    email           String?    @default(dbgenerated("lower((identity_data ->> 'email'::text))"))
+    id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    users           auth_users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@unique([provider_id, provider], map: "identities_provider_id_provider_unique")
+    @@index([email])
+    @@index([user_id])
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model instances {
+    id              String    @id @db.Uuid
+    uuid            String?   @db.Uuid
+    raw_base_config String?
+    created_at      DateTime? @db.Timestamptz(6)
+    updated_at      DateTime? @db.Timestamptz(6)
+
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model mfa_amr_claims {
+    session_id            String   @db.Uuid
+    created_at            DateTime @db.Timestamptz(6)
+    updated_at            DateTime @db.Timestamptz(6)
+    authentication_method String
+    id                    String   @id(map: "amr_id_pk") @db.Uuid
+    sessions              sessions @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@unique([session_id, authentication_method], map: "mfa_amr_claims_session_id_authentication_method_pkey")
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model mfa_challenges {
+    id          String      @id @db.Uuid
+    factor_id   String      @db.Uuid
+    created_at  DateTime    @db.Timestamptz(6)
+    verified_at DateTime?   @db.Timestamptz(6)
+    ip_address  String      @db.Inet
+    otp_code    String?
+    mfa_factors mfa_factors @relation(fields: [factor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mfa_challenges_auth_factor_id_fkey")
+
+    @@index([created_at(sort: Desc)], map: "mfa_challenge_created_at_idx")
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model mfa_factors {
+    id                 String           @id @db.Uuid
+    user_id            String           @db.Uuid
+    friendly_name      String?
+    factor_type        factor_type
+    status             factor_status
+    created_at         DateTime         @db.Timestamptz(6)
+    updated_at         DateTime         @db.Timestamptz(6)
+    secret             String?
+    phone              String?
+    last_challenged_at DateTime?        @unique @db.Timestamptz(6)
+    mfa_challenges     mfa_challenges[]
+    users              auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@unique([user_id, phone], map: "unique_phone_factor_per_user")
+    @@index([user_id, created_at], map: "factor_id_created_at_idx")
+    @@index([user_id])
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model one_time_tokens {
+    id         String              @id @db.Uuid
+    user_id    String              @db.Uuid
+    token_type one_time_token_type
+    token_hash String
+    relates_to String
+    created_at DateTime            @default(now()) @db.Timestamp(6)
+    updated_at DateTime            @default(now()) @db.Timestamp(6)
+    users      auth_users          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@unique([user_id, token_type])
+    @@index([relates_to], map: "one_time_tokens_relates_to_hash_idx", type: Hash)
+    @@index([token_hash], map: "one_time_tokens_token_hash_hash_idx", type: Hash)
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model refresh_tokens {
+    instance_id String?   @db.Uuid
+    id          BigInt    @id @default(autoincrement())
+    token       String?   @unique(map: "refresh_tokens_token_unique") @db.VarChar(255)
+    user_id     String?   @db.VarChar(255)
+    revoked     Boolean?
+    created_at  DateTime? @db.Timestamptz(6)
+    updated_at  DateTime? @db.Timestamptz(6)
+    parent      String?   @db.VarChar(255)
+    session_id  String?   @db.Uuid
+    sessions    sessions? @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([instance_id])
+    @@index([instance_id, user_id])
+    @@index([parent])
+    @@index([session_id, revoked])
+    @@index([updated_at(sort: Desc)])
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model saml_providers {
+    id                String        @id @db.Uuid
+    sso_provider_id   String        @db.Uuid
+    entity_id         String        @unique
+    metadata_xml      String
+    metadata_url      String?
+    attribute_mapping Json?
+    created_at        DateTime?     @db.Timestamptz(6)
+    updated_at        DateTime?     @db.Timestamptz(6)
+    name_id_format    String?
+    sso_providers     sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([sso_provider_id])
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model saml_relay_states {
+    id              String        @id @db.Uuid
+    sso_provider_id String        @db.Uuid
+    request_id      String
+    for_email       String?
+    redirect_to     String?
+    created_at      DateTime?     @db.Timestamptz(6)
+    updated_at      DateTime?     @db.Timestamptz(6)
+    flow_state_id   String?       @db.Uuid
+    flow_state      flow_state?   @relation(fields: [flow_state_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([created_at(sort: Desc)])
+    @@index([for_email])
+    @@index([sso_provider_id])
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model schema_migrations {
+    version String @id @db.VarChar(255)
+
+    @@schema("auth")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model sessions {
+    id             String           @id @db.Uuid
+    user_id        String           @db.Uuid
+    created_at     DateTime?        @db.Timestamptz(6)
+    updated_at     DateTime?        @db.Timestamptz(6)
+    factor_id      String?          @db.Uuid
+    aal            aal_level?
+    not_after      DateTime?        @db.Timestamptz(6)
+    refreshed_at   DateTime?        @db.Timestamp(6)
+    user_agent     String?
+    ip             String?          @db.Inet
+    tag            String?
+    mfa_amr_claims mfa_amr_claims[]
+    refresh_tokens refresh_tokens[]
+    users          auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([not_after(sort: Desc)])
+    @@index([user_id])
+    @@index([user_id, created_at], map: "user_id_created_at_idx")
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model sso_domains {
+    id              String        @id @db.Uuid
+    sso_provider_id String        @db.Uuid
+    domain          String
+    created_at      DateTime?     @db.Timestamptz(6)
+    updated_at      DateTime?     @db.Timestamptz(6)
+    sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([sso_provider_id])
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model sso_providers {
+    id                String              @id @db.Uuid
+    resource_id       String?
+    created_at        DateTime?           @db.Timestamptz(6)
+    updated_at        DateTime?           @db.Timestamptz(6)
+    saml_providers    saml_providers[]
+    saml_relay_states saml_relay_states[]
+    sso_domains       sso_domains[]
+
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model auth_users {
+    instance_id                 String?           @db.Uuid
+    id                          String            @id @db.Uuid
+    aud                         String?           @db.VarChar(255)
+    role                        String?           @db.VarChar(255)
+    email                       String?           @db.VarChar(255)
+    encrypted_password          String?           @db.VarChar(255)
+    email_confirmed_at          DateTime?         @db.Timestamptz(6)
+    invited_at                  DateTime?         @db.Timestamptz(6)
+    confirmation_token          String?           @db.VarChar(255)
+    confirmation_sent_at        DateTime?         @db.Timestamptz(6)
+    recovery_token              String?           @db.VarChar(255)
+    recovery_sent_at            DateTime?         @db.Timestamptz(6)
+    email_change_token_new      String?           @db.VarChar(255)
+    email_change                String?           @db.VarChar(255)
+    email_change_sent_at        DateTime?         @db.Timestamptz(6)
+    last_sign_in_at             DateTime?         @db.Timestamptz(6)
+    raw_app_meta_data           Json?
+    raw_user_meta_data          Json?
+    is_super_admin              Boolean?
+    created_at                  DateTime?         @db.Timestamptz(6)
+    updated_at                  DateTime?         @db.Timestamptz(6)
+    phone                       String?           @unique
+    phone_confirmed_at          DateTime?         @db.Timestamptz(6)
+    phone_change                String?           @default("")
+    phone_change_token          String?           @default("") @db.VarChar(255)
+    phone_change_sent_at        DateTime?         @db.Timestamptz(6)
+    confirmed_at                DateTime?         @default(dbgenerated("LEAST(email_confirmed_at, phone_confirmed_at)")) @db.Timestamptz(6)
+    email_change_token_current  String?           @default("") @db.VarChar(255)
+    email_change_confirm_status Int?              @default(0) @db.SmallInt
+    banned_until                DateTime?         @db.Timestamptz(6)
+    reauthentication_token      String?           @default("") @db.VarChar(255)
+    reauthentication_sent_at    DateTime?         @db.Timestamptz(6)
+    is_sso_user                 Boolean           @default(false)
+    deleted_at                  DateTime?         @db.Timestamptz(6)
+    is_anonymous                Boolean           @default(false)
+    identities                  identities[]
+    mfa_factors                 mfa_factors[]
+    one_time_tokens             one_time_tokens[]
+    sessions                    sessions[]
+    users                       public_users?
+
+    @@index([instance_id])
+    @@index([is_anonymous])
+    @@map("users")
+    @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model key {
+    id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    status          key_status? @default(valid)
+    created         DateTime    @default(now()) @db.Timestamptz(6)
+    expires         DateTime?   @db.Timestamptz(6)
+    key_type        key_type?
+    key_id          BigInt?     @default(autoincrement())
+    key_context     Bytes?      @default("cGdzb2RpdW0=")
+    name            String?     @unique(map: "pgsodium_key_unique_name")
+    associated_data String?     @default("associated")
+    raw_key         Bytes?
+    raw_key_nonce   Bytes?
+    parent_key      String?     @db.Uuid
+    comment         String?
+    user_data       String?
+    key             key?        @relation("keyTokey", fields: [parent_key], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    other_key       key[]       @relation("keyTokey")
+    secrets         secrets[]
+
+    @@unique([key_id, key_context, key_type], map: "key_key_id_key_context_key_type_idx")
+    @@schema("pgsodium")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model public_users {
+    id             String     @id @db.Uuid
+    updated_at     DateTime?  @db.Timestamptz(6)
+    username       String?    @unique
+    first_name     String?
+    last_name      String?
+    user_secret_id String     @unique(map: "users_user_secret_key") @db.Uuid
+    created_at     DateTime?  @default(dbgenerated("(now() AT TIME ZONE 'utc'::text)")) @db.Timestamptz(6)
+    role           String?    @default("") @db.VarChar
+    users          auth_users @relation(fields: [id], references: [id], onDelete: Cascade)
+    secrets        secrets    @relation(fields: [user_secret_id], references: [id], onDelete: Cascade)
+
+    @@map("users")
+    @@schema("public")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model secrets {
+    id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    name        String?
+    description String        @default("")
+    secret      String
+    key_id      String?       @default(dbgenerated("(pgsodium.create_key()).id")) @db.Uuid
+    nonce       Bytes?        @default(dbgenerated("pgsodium.crypto_aead_det_noncegen()"))
+    created_at  DateTime      @default(now()) @db.Timestamptz(6)
+    updated_at  DateTime      @default(now()) @db.Timestamptz(6)
+    users       public_users?
+    key         key?          @relation(fields: [key_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+    @@schema("vault")
+}
+
+enum aal_level {
+    aal1
+    aal2
+    aal3
+
+    @@schema("auth")
+}
+
+enum code_challenge_method {
+    s256
+    plain
+
+    @@schema("auth")
+}
+
+enum factor_status {
+    unverified
+    verified
+
+    @@schema("auth")
+}
+
+enum factor_type {
+    totp
+    webauthn
+    phone
+
+    @@schema("auth")
+}
+
+enum one_time_token_type {
+    confirmation_token
+    reauthentication_token
+    recovery_token
+    email_change_token_new
+    email_change_token_current
+    phone_change_token
+
+    @@schema("auth")
+}
+
+enum key_status {
+    default
+    valid
+    invalid
+    expired
+
+    @@schema("pgsodium")
+}
+
+enum key_type {
+    aead_ietf        @map("aead-ietf")
+    aead_det         @map("aead-det")
+    hmacsha512
+    hmacsha256
+    auth
+    shorthash
+    generichash
+    kdf
+    secretbox
+    secretstream
+    stream_xchacha20
+
+    @@schema("pgsodium")
 }
