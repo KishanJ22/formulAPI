@@ -2,8 +2,11 @@ import express, { Request, Response } from "express";
 import { driverRouter } from "./drivers/drivers.router";
 import { circuitRouter } from "./circuits/circuits.router";
 import { PORT } from "./config";
+import { usersRouter } from "./users/users.router";
+import { authRouter } from "./auth/auth.router";
 
 const app = express();
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req: Request, res: Response) => {
     res.send({ message: "Welcome to FormulAPI!" });
@@ -22,5 +25,7 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 
+authRouter(app);
 driverRouter(app);
 circuitRouter(app);
+usersRouter(app);
