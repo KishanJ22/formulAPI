@@ -1,18 +1,18 @@
 import express, { Request, Response, Router } from "express";
-import { getSecret } from "./auth.core";
+import { authenticateUser } from "./auth.core";
 
 export const authRouter = (app: Router) => {
     const router = express.Router();
     const base = "/auth";
     app.use(base, router);
 
-    router.post("/get-user-key", async (req: Request, res: Response) => {
+    router.post("/get-token", async (req: Request, res: Response) => {
         const { username, key } = req.body;
-        const userKey = await getSecret(username, key);
-        if (userKey) {
-            res.status(200).send({ message: "Authentication successful" });
+        const authToken = await authenticateUser(username, key);
+        if (authToken) {
+            res.status(200).send({ authToken });
         } else {
-            res.status(400).send({ message: "Failed to authenticate" });
+            res.status(401).send({ message: "Failed to authenticate" });
         }
     });
 };
