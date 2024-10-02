@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import { driverRouter } from "./drivers/drivers.router";
 import { circuitRouter } from "./circuits/circuits.router";
 import { PORT } from "./config";
-import { usersRouter } from "./users/users.router";
 import { authRouter } from "./auth/auth.router";
 
 const app = express();
@@ -28,4 +27,3 @@ if (process.env.NODE_ENV !== "test") {
 authRouter(app);
 driverRouter(app);
 circuitRouter(app);
-usersRouter(app);
