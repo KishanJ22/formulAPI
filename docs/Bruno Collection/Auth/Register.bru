@@ -1,0 +1,17 @@
+meta {
+  name: Register
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/auth/register
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  username: testuser27
+  first_name: test10
+  last_name: user10
+}
