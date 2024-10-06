@@ -27,7 +27,13 @@ export const authRouter = (app: Router) => {
         return res.status(200).send({ data });
     });
 
-    router.get("/verify-token", verifyJwt, async (req: Request, res: Response) => {
-        return res.status(200).send({ message: "Token is valid" });
-    });
+    router.get(
+        "/verify-token",
+        verifyJwt,
+        async (req: Request, res: Response) => {
+            return res
+                .status(200)
+                .send({ message: "Token is valid" });
+        },
+    );
 };
