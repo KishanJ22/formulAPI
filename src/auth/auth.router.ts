@@ -18,12 +18,12 @@ export const authRouter = (app: Router) => {
     });
 
     router.post("/get-token", async (req: Request, res: Response) => {
-        const { username } = req.body;
-        const authToken = await authenticateUser(username);
-        if (authToken) {
-            return res.status(200).send({ authToken });
-        } else {
-            return res.status(401).send({ message: "Failed to authenticate" });
+        const { username, key } = req.body;
+        try {
+            const token = await authenticateUser(username, key);
+            return res.status(200).send({ token });
+        } catch (error: any) {
+            return res.status(401).send({ error: error.message });
         }
     });
 
@@ -50,4 +50,5 @@ export const authRouter = (app: Router) => {
             }
         },
     );
+    return router;
 };

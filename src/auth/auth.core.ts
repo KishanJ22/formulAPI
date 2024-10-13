@@ -3,6 +3,13 @@ import { createUser, getUserKey, getSingleUser, getUsers } from "./auth.model";
 import { sign, verify, JwtPayload } from "jsonwebtoken";
 import { setAsyncLocalStorage } from "../plugins/local-storage";
 
+export interface User {
+    username: string;
+    first_name: string;
+    last_name: string;
+    role: string;
+}
+
 const jwtSecret = process.env.JWT_SECRET ?? "";
 
 export const registerUser = async (
@@ -24,23 +31,23 @@ export const registerUser = async (
     return { message: "User created", username, api_key };
 };
 
-export const authenticateUser = async (username: string) => {
-    const user = await getSingleUser(username);
-    if (!user) {
-        return false;
+export const authenticateUser = async (username: string, key: string) => {
+    if (!username || !key) {
+        throw new Error("Username and key are required");
     }
+    const getUser = await getSingleUser(username);
+    if (!getUser) {
+        throw new Error("User not found");
+    }
+    const user = getUser as User;
     const secret = await getUserKey(username);
-    if (!secret) {
-        return false;
+    if (secret !== key) {
+        throw new Error("Invalid key");
     }
-    return generateJwt(username);
+    return generateJwt(user);
 };
 
-export const generateJwt = async (username: string) => {
-    const user = await getSingleUser(username);
-    if (!user) {
-        return false;
-    }
+export const generateJwt = async (user: User) => {
     const userDetails = {
         username: user.username,
         first_name: user.first_name,
@@ -48,13 +55,16 @@ export const generateJwt = async (username: string) => {
         role: user.role,
     };
     const options = {
-        subject: user.username as string,
+        subject: user.username,
         algorithm: "HS256" as const,
         issuer: "auth-service",
         expiresIn: "1h",
     };
-    const token = sign(userDetails, jwtSecret, options);
-    return { access_token: token, token_type: "Bearer", expires_in: 3600 };
+    return {
+        token: sign(userDetails, jwtSecret, options),
+        tokenType: "Bearer",
+        expiresIn: options.expiresIn,
+    };
 };
 
 export const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
