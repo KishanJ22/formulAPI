@@ -45,13 +45,11 @@ export const createUser = async (
 
     const created_at = new Date();
 
-    const user = await prisma.auth_users.create({
+    await prisma.auth_users.create({
         data: {
             id,
             raw_user_meta_data,
             created_at,
         },
     });
-
-    return user;
 };
