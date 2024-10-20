@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { driverRouter } from "./drivers/drivers.router";
 import { circuitRouter } from "./circuits/circuits.router";
 import { PORT } from "./config";
-import { authRouter } from "./auth/auth.router";
+import { authRouter } from "./auth/auth";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
