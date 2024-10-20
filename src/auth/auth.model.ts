@@ -8,20 +8,26 @@ export const getUserKey = async (username: string): Promise<string> => {
         public.users u
         join vault.decrypted_secrets ds on u.user_secret_id = ds.id
         where u.username = ${username};`;
-    return query[0].key;
+
+    return query[0].key; // Returns the API key for the user with the given username
 };
 
-export const getUsers = async () => {
-    return prisma.public_users.findMany();
-};
+export const getUsers = async () => await prisma.public_users.findMany();
 
-export const getSingleUser = async (username: string) => {
-    const getUser = await prisma.public_users.findUnique({
+export const getUserById = async (id: string) => {
+    return prisma.public_users.findUnique({
         where: {
-            username: username,
+            id,
         },
     });
-    return getUser;
+};
+
+export const getUserByUsername = async (username: string) => {
+    return prisma.public_users.findUnique({
+        where: {
+            username,
+        },
+    });
 };
 
 export const createUser = async (
@@ -36,7 +42,9 @@ export const createUser = async (
         last_name,
         role: "authenticated",
     };
+
     const created_at = new Date();
+
     const user = await prisma.auth_users.create({
         data: {
             id,
@@ -44,5 +52,6 @@ export const createUser = async (
             created_at,
         },
     });
+
     return user;
 };
