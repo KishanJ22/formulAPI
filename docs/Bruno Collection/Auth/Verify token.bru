@@ -1,0 +1,15 @@
+meta {
+  name: Verify token
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}/auth/verify-token
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{JWT}}
+}
