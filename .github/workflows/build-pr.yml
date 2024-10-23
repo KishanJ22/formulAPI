@@ -50,7 +50,6 @@ jobs:
               with:
                 args: >
                     -Dsonar.branch.name=${{ github.head_ref }}
-                    -Dsonar.branch.target=main
                     -Dsonar.pullrequest.key=${{ github.event.number }}
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
