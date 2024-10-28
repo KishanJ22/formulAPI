@@ -2,6 +2,7 @@
     "name": "formulapi",
     "version": "0.1.0",
     "description": "",
+    "type": "module",
     "main": "index.js",
     "scripts": {
         "build": "tsc -b",
@@ -27,14 +28,17 @@
     "homepage": "https://github.com/KishanJ22/formulAPI#readme",
     "dependencies": {
         "@prisma/client": "^5.18.0",
+        "@sinclair/typebox": "^0.33.17",
         "@types/jsonwebtoken": "^9.0.7",
         "@types/uuid": "^10.0.0",
         "axios": "^1.7.4",
         "body-parser": "^1.20.3",
         "express": "^4.19.2",
+        "fastify": "^5.0.0",
         "jsonwebtoken": "^9.0.2",
         "ky": "^1.7.2",
         "nodemon": "^3.1.4",
+        "pino": "^9.5.0",
         "ts-node": "^10.9.2"
     },
     "devDependencies": {
