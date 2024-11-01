@@ -1,7 +1,6 @@
 import fastify from "../../app";
 import { prisma } from "../../config";
 import { type Driver, driver } from "./schemas/DriverSchema";
-import { Decimal } from "@prisma/client/runtime/library";
 
 import { type Static, Type } from "@sinclair/typebox";
 
@@ -17,30 +16,37 @@ const invalidQuery = Type.Object({
 
 type InvalidQuerySchema = Static<typeof invalidQuery>;
 
-export default fastify.get<{ Reply: { drivers: Driver[] } | NotFoundSchema | InvalidQuerySchema }>(
-    "/drivers",
-    {
-        schema: {
-            response: {
-                200: Type.Object({ drivers: Type.Array(driver) }),
-                400: invalidQuery,
-                404: notFound,
+export const getDrivers = async () => {
+    fastify.get<{
+        Reply: { data: Driver[] } | NotFoundSchema | InvalidQuerySchema;
+    }>(
+        "/drivers",
+        {
+            schema: {
+                response: {
+                    200: Type.Object({ data: Type.Array(driver) }),
+                    400: invalidQuery,
+                    404: notFound,
+                },
             },
         },
-    },
-    async (request, reply) => {
+        async (request, reply) => {
+            const drivers = await prisma.driver.findMany();
 
-        const drivers = await prisma.driver.findMany();
+            if (drivers.length === 0) {
+                return reply.status(404).send({ message: "No Drivers Found" });
+            }
 
-        if (drivers.length === 0) {
-            return reply.status(404).send({ message: "No Drivers Found" });
-        }
+            const formattedDrivers: Driver[] = drivers.map((driver) => {
+                return {
+                    ...driver,
+                    total_points: driver.total_points.toNumber(),
+                    total_championship_points:
+                        driver.total_championship_points.toNumber(),
+                };
+            });
 
-        drivers.forEach((driver) => {
-            driver.total_points = driver.total_points as number;
-            driver.total_championship_points = Number(driver.total_championship_points);
-        });
-
-        return reply.status(200).send({ drivers });
-    },
-);
+            return reply.status(200).send({ data: formattedDrivers });
+        },
+    );
+};
