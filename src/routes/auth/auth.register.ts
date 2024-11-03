@@ -1,4 +1,4 @@
-import fastify from "../../app.js";
+import { FastifyInstance } from "fastify";
 import { prisma } from "../../config.js";
 import { getUserById, getUserByUsername, getUserKey } from "./auth.model.js";
 import {
@@ -40,7 +40,7 @@ const createUserRecord = async (
     });
 };
 
-const registerUser = () => {
+const registerUser = (fastify: FastifyInstance) => {
     fastify.post<{
         Body: RegistrationBodySchema;
         Reply:

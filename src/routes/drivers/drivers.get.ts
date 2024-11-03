@@ -1,8 +1,8 @@
-import { type Static, Type } from "@sinclair/typebox";
-import fastify from "../../app.js";
 import { prisma } from "../../config.js";
 import { type Driver, driver } from "./schemas/DriverSchema.js";
 import { invalidQuery, type InvalidQuerySchema, internalServerError, type InternalServerErrorSchema } from "../../utils/Error.js";
+import { type Static, Type } from "@sinclair/typebox";
+import { FastifyInstance } from "fastify";
 
 const notFound = Type.Object({
     message: Type.Literal("No Drivers Found"),
@@ -10,7 +10,7 @@ const notFound = Type.Object({
 
 type NotFoundSchema = Static<typeof notFound>;
 
-const getDrivers = () => {
+const getDrivers = (fastify: FastifyInstance) => {
     fastify.get<{
         Reply:
             | { data: Driver[] }

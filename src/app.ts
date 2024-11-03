@@ -1,5 +1,4 @@
 import { logger, envOptions as options } from "./config.js";
-
 import fastify, { FastifyInstance } from "fastify";
 import { fastifyEnv } from "@fastify/env";
 import { fastifyJwt } from "@fastify/jwt";

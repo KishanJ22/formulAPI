@@ -1,5 +1,4 @@
 import type { SignOptions } from "@fastify/jwt";
-import fastify from "../../app.js";
 import { getUserByUsername, getUserKey } from "./auth.model.js";
 import {
     getTokenBody,
@@ -15,8 +14,9 @@ import type {
     MissingFieldsSchema,
     UserNotFoundSchema,
 } from "./schema/AuthSchema.js";
+import { FastifyInstance } from "fastify";
 
-const getToken = () => {
+const getToken = (fastify: FastifyInstance) => {
     fastify.post<{
         Body: GetTokenBodySchema;
         Reply:

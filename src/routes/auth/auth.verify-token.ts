@@ -1,7 +1,7 @@
-import fastify from "../../app.js";
-import { validToken, ValidTokenSchema } from "./schema/AuthSchema.js";
+import { FastifyInstance } from "fastify";
+import { validToken, type ValidTokenSchema } from "./schema/AuthSchema.js";
 
-const verifyToken = () => {
+const verifyToken = (fastify: FastifyInstance) => {
     fastify.get<{
         Reply: ValidTokenSchema;
     }>(
@@ -23,7 +23,7 @@ const verifyToken = () => {
                 lastname: request.user.lastname,
                 role: request.user.role,
                 expiresAt: new Date(request.user.exp * 1000).toUTCString(),
-            }
+            };
 
             return reply
                 .status(200)
