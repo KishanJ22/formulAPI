@@ -1,20 +1,20 @@
 import type { SignOptions } from "@fastify/jwt";
-import fastify from "../../app";
-import { getUserByUsername, getUserKey } from "./auth.model";
+import fastify from "../../app.js";
+import { getUserByUsername, getUserKey } from "./auth.model.js";
 import {
     getTokenBody,
     getTokenResponse,
     invalidCredentials,
     missingFields,
     userNotFound,
-} from "./schema/AuthSchema";
+} from "./schema/AuthSchema.js";
 import type {
     GetTokenBodySchema,
     GetTokenResponseSchema,
     InvalidCredentialsSchema,
     MissingFieldsSchema,
     UserNotFoundSchema,
-} from "./schema/AuthSchema";
+} from "./schema/AuthSchema.js";
 
 const getToken = () => {
     fastify.post<{

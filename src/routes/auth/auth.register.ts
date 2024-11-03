@@ -1,20 +1,20 @@
-import fastify from "../../app";
-import { prisma } from "../../config";
-import { getUserById, getUserByUsername, getUserKey } from "./auth.model";
+import fastify from "../../app.js";
+import { prisma } from "../../config.js";
+import { getUserById, getUserByUsername, getUserKey } from "./auth.model.js";
 import {
     registrationBody,
     successfulRegistration,
     usernameExists,
     missingFields,
     errorCreatingUser,
-} from "./schema/AuthSchema";
+} from "./schema/AuthSchema.js";
 import type {
     RegistrationBodySchema,
     SuccessfulRegistrationSchema,
     UsernameExistsSchema,
     MissingFieldsSchema,
     ErrorCreatingUserSchema,
-} from "./schema/AuthSchema";
+} from "./schema/AuthSchema.js";
 
 const createUserRecord = async (
     id: string,

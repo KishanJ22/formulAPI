@@ -1,13 +1,8 @@
-import fastify from "../../app";
-import { prisma } from "../../config";
-import { type Driver, driver } from "./schemas/DriverSchema";
-import { invalidQuery, internalServerError } from "../../utils/Error";
-import type {
-    InvalidQuerySchema,
-    InternalServerErrorSchema,
-} from "../../utils/Error";
-
 import { type Static, Type } from "@sinclair/typebox";
+import fastify from "../../app.js";
+import { prisma } from "../../config.js";
+import { type Driver, driver } from "./schemas/DriverSchema.js";
+import { invalidQuery, type InvalidQuerySchema, internalServerError, type InternalServerErrorSchema } from "../../utils/Error.js";
 
 const notFound = Type.Object({
     message: Type.Literal("No Drivers Found"),

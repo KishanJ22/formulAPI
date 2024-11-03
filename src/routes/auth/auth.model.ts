@@ -1,4 +1,4 @@
-import { prisma } from "../../config";
+import { prisma } from "../../config.js";
 
 export const getUserKey = async (username: string): Promise<string> => {
     // prisma query raw is used to return the results of an SQL statement in an array

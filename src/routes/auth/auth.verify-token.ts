@@ -1,5 +1,5 @@
-import fastify from "../../app";
-import { validToken, ValidTokenSchema } from "./schema/AuthSchema";
+import fastify from "../../app.js";
+import { validToken, ValidTokenSchema } from "./schema/AuthSchema.js";
 
 const verifyToken = () => {
     fastify.get<{
