@@ -19,4 +19,25 @@ export default fp(async (fastify: FastifyInstance) => {
             }
         },
     );
+
+    fastify.decorate(
+        "authorize",
+        (roles: string[]) =>
+            async (request: FastifyRequest, reply: FastifyReply) => {
+                if (!request.user) {
+                    await fastify.authenticate(request, reply);
+                }
+
+                const { role } = request.user;
+
+                if (!roles.includes(role)) {
+                    reply.status(403).send({
+                        message: "You do not have permission to access this resource",
+                    });
+                }
+
+                return;
+
+            },
+    );
 });

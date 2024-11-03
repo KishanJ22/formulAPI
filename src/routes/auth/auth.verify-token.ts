@@ -2,7 +2,9 @@ import fastify from "../../app";
 import { validToken, ValidTokenSchema } from "./schema/AuthSchema";
 
 const verifyToken = () => {
-    fastify.get(
+    fastify.get<{
+        Reply: ValidTokenSchema;
+    }>(
         "/auth/verify-token",
         {
             onRequest: [fastify.authenticate],
