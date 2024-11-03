@@ -1,4 +1,4 @@
-import prisma from "../db";
+import { prisma } from "../../config";
 
 export const getUserKey = async (username: string): Promise<string> => {
     // prisma query raw is used to return the results of an SQL statement in an array
@@ -12,8 +12,6 @@ export const getUserKey = async (username: string): Promise<string> => {
     return query[0].key; // Returns the API key for the user with the given username
 };
 
-export const getUsers = async () => await prisma.public_users.findMany();
-
 export const getUserById = async (id: string) => {
     return prisma.public_users.findUnique({
         where: {
@@ -26,30 +24,6 @@ export const getUserByUsername = async (username: string) => {
     return prisma.public_users.findUnique({
         where: {
             username,
-        },
-    });
-};
-
-export const createUser = async (
-    id: string,
-    username: string,
-    first_name: string,
-    last_name: string,
-) => {
-    const raw_user_meta_data = {
-        username,
-        first_name,
-        last_name,
-        role: "authenticated",
-    };
-
-    const created_at = new Date();
-
-    await prisma.auth_users.create({
-        data: {
-            id,
-            raw_user_meta_data,
-            created_at,
         },
     });
 };
