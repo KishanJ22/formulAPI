@@ -10,7 +10,6 @@ export const logger = {
         options: {
             translateTime: "HH:MM:ss Z",
             ignore: "pid,hostname",
-            
         },
     },
 };
