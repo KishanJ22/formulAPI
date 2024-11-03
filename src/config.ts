@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-export const PORT = Number(process.env.PORT ?? 3000);
-export const APP_URL = process.env.APP_URL;
 export const prisma = new PrismaClient();
 
 export const logger = {
@@ -10,6 +8,29 @@ export const logger = {
         options: {
             translateTime: "HH:MM:ss Z",
             ignore: "pid,hostname",
+        },
+    },
+};
+
+export const envOptions = {
+    dotenv: true,
+    schema: {
+        type: "object",
+        required: ["PORT", "JWT_SECRET", "DATABASE_URL", "DIRECT_URL"],
+        properties: {
+            PORT: {
+                type: "string",
+                default: "3000",
+            },
+            JWT_SECRET: {
+                type: "string",
+            },
+            DATABASE_URL: {
+                type: "string",
+            },
+            DIRECT_URL: {
+                type: "string",
+            },
         },
     },
 };
