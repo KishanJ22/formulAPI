@@ -1,6 +1,11 @@
 import { prisma } from "../../config.js";
 import { type Driver, driver } from "./schemas/DriverSchema.js";
-import { invalidQuery, type InvalidQuerySchema, internalServerError, type InternalServerErrorSchema } from "../../utils/Error.js";
+import {
+    invalidQuery,
+    type InvalidQuerySchema,
+    internalServerError,
+    type InternalServerErrorSchema,
+} from "../../utils/Error.js";
 import { type Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
 
@@ -12,6 +17,7 @@ type NotFoundSchema = Static<typeof notFound>;
 
 const getDrivers = (fastify: FastifyInstance) => {
     fastify.get<{
+        Querystring: Driver;
         Reply:
             | { data: Driver[] }
             | NotFoundSchema
@@ -27,17 +33,15 @@ const getDrivers = (fastify: FastifyInstance) => {
                     404: notFound,
                     500: internalServerError,
                 },
+                querystring: {
+                    type: "object",
+                    properties: driver.properties,
+                },
             },
         },
         async (request, reply) => {
             try {
                 const drivers = await prisma.driver.findMany();
-
-                if (drivers.length === 0) {
-                    return reply
-                        .status(404)
-                        .send({ message: "No Drivers Found" });
-                }
 
                 const formattedDrivers: Driver[] = drivers.map((driver) => ({
                     ...driver,
@@ -46,7 +50,40 @@ const getDrivers = (fastify: FastifyInstance) => {
                         driver.total_championship_points.toNumber(),
                 }));
 
-                return reply.status(200).send({ data: formattedDrivers });
+                if (request.query && Object.keys(request.query).length > 0) {
+                    const query: Partial<Driver> = request.query;
+                    const queryKeys = Object.keys(query) as (keyof Driver)[];
+
+                    if (
+                        !queryKeys.every((key) =>
+                            Object.keys(driver.properties).includes(key),
+                        )
+                    ) {
+                        return reply
+                            .status(400)
+                            .send({ message: "Invalid Search Query" });
+                    }
+
+                    const filteredDrivers = formattedDrivers.filter(
+                        (driver: Driver) => {
+                            return queryKeys.every(
+                                (key) =>
+                                    query[key]?.toString() ===
+                                    driver[key]?.toString(),
+                            );
+                        },
+                    );
+
+                    if (filteredDrivers.length === 0) {
+                        return reply
+                            .status(404)
+                            .send({ message: "No Drivers Found" });
+                    }
+
+                    return reply.status(200).send({ data: filteredDrivers });
+                } else {
+                    return reply.status(200).send({ data: formattedDrivers });
+                }
             } catch (error) {
                 fastify.log.error(error);
                 return reply
