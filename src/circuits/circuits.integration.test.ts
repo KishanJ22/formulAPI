@@ -1,13 +1,36 @@
-import { describe, expect, it } from "vitest";
-import axios, { AxiosResponse, AxiosError } from "axios";
-import prisma from "../db";
-import { APP_URL } from "../config";
+import {
+    afterEach,
+    afterAll,
+    describe,
+    expect,
+    it,
+    vi,
+    beforeAll,
+} from "vitest";
+import axios, { AxiosResponse } from "axios";
+import { closemockApp, createmockApp } from "../__mocks__/express";
+import { BASE_URL } from "../config";
 
-const circuitsAxios = axios.create({
-    baseURL: `${APP_URL}`,
-});
+describe("Circuit Integration Tests", () => {
+    let circuitsAxios: any;
 
-describe.todo("Circuit Integration Tests", () => {
+    beforeAll(async () => {
+        const port = 3002;
+        await createmockApp(port);
+
+        circuitsAxios = axios.create({
+            baseURL: `${BASE_URL}:${port}`,
+        });
+    });
+
+    afterEach(async () => {
+        vi.clearAllMocks();
+    });
+
+    afterAll(async () => {
+        await closemockApp();
+    });
+
     describe("GET /circuits", () => {
         it("should return all circuits", async () => {
             const response: AxiosResponse =
