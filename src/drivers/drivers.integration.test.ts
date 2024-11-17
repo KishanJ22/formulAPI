@@ -17,10 +17,11 @@ describe("Driver Integration Tests", () => {
     let driversAxios: any;
 
     beforeAll(async () => {
-        const mockApp = createmockApp();
+        const port = 3001;
+        await createmockApp(port);
 
         driversAxios = axios.create({
-            baseURL: BASE_URL,
+            baseURL: `${BASE_URL}:${port}`,
         });
     });
 

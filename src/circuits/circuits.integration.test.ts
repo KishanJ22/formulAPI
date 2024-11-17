@@ -14,11 +14,12 @@ import { BASE_URL } from "../config";
 describe("Circuit Integration Tests", () => {
     let circuitsAxios: any;
 
-    beforeAll(() => {
-        const mockApp = createmockApp();
+    beforeAll(async () => {
+        const port = 3002;
+        await createmockApp(port);
 
         circuitsAxios = axios.create({
-            baseURL: BASE_URL,
+            baseURL: `${BASE_URL}:${port}`,
         });
     });
 
