@@ -31,7 +31,7 @@ jobs:
                   context: .
                   file: ./Dockerfile
                   push: true
-                  tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+                  tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             - name: Deploy to Coolify
               run: |
                   curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
