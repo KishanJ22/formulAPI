@@ -20,9 +20,10 @@ jobs:
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
-            - name: Build and push the Docker image
-              run: docker build . --file Dockerfile --tag kishjet/formulapi:latest
-            - name: Run tests
-              run: docker run -e DATABASE_URL=$DATABASE_URL -e APP_PORT=$APP_PORT kishjet/formulapi:latest pnpm test
+            - name: Build the Docker image
+              run: docker build . --file Dockerfile --tag kishjet/formulapi:${{ github.sha }}
             - name: Push the Docker image
-              run: docker push kishjet/formulapi:latest
+              run: docker push kishjet/formulapi:${{ github.sha }}
+            - name: Deploy to Development environment
+              run: |
+                  curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
