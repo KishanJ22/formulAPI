@@ -45,9 +45,10 @@ const getDrivers = (fastify: FastifyInstance) => {
 
                 const formattedDrivers: Driver[] = drivers.map((driver) => ({
                     ...driver,
+                    date_of_birth: driver.date_of_birth.toISOString(),
+                    date_of_death: driver.date_of_death?.toISOString() ?? null,
                     total_points: driver.total_points.toNumber(),
-                    total_championship_points:
-                        driver.total_championship_points.toNumber(),
+                    total_championship_points: driver.total_championship_points.toNumber(),
                 }));
 
                 if (request.query && Object.keys(request.query).length > 0) {

@@ -1,17 +1,16 @@
-import app from "./app.js";
-import registerUser from "./routes/auth/auth.register.js";
-import getToken from "./routes/auth/auth.get-token.js";
-import verifyToken from "./routes/auth/auth.verify-token.js";
-import getDrivers from "./routes/drivers/drivers.get.js";
-import getCircuits from "./routes/circuits/circuits.get.js";
+import loadApp from "./app.js";
 
-// /auth
-app.register(registerUser);
-app.register(getToken);
-app.register(verifyToken);
+const start = async () => {
+    const app = await loadApp();
+    app.listen({ port: 3000 }, (err, address) => {
+        if (err) {
+            app.log.error(err);
+            process.exit(1);
+        }
+        app.log.info(`Server listening at ${address}`);
+    });
+};
 
-// /drivers
-app.register(getDrivers);
-
-// /circuits
-app.register(getCircuits);
+start().catch((err) => {
+    console.error("Error starting server: ", err);
+});

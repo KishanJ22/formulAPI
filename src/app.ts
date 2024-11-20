@@ -6,35 +6,32 @@ import FastifyFormBody from "@fastify/formbody";
 import fastifyAutoload from "@fastify/autoload";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import registerRoutes from "./routes/routes.js";
 
 const app: FastifyInstance = fastify({
     logger,
 });
 
 app.register(fastifyEnv, options);
-await app.after();
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+await app.after(); // This is required to load the environment variables before the plugins
 
 app.register(fastifyAutoload, {
-    dir: join(__dirname, "plugins"),
+    dir: join(dirname(fileURLToPath(import.meta.url)), "plugins"),
+    ignorePattern: /.*(test|spec).js/,
 });
-
+app.register(registerRoutes);
+app.register(FastifyFormBody);
 app.register(fastifyJwt, {
     secret: app.config.JWT_SECRET,
 });
 
-app.register(FastifyFormBody);
-
-app.listen({ port: app.config.PORT }, function (err) {
-    if (err) {
-        app.log.error(err);
-        process.exit(1);
-    }
-});
-
 app.get("/", async (request, reply) => {
-    reply.status(200).send({ message: "Welcome to FormulAPI!" });
+    return { message: "Welcome to FormulAPI!" };
 });
 
-export default app;
+export const loadApp = async () => {
+    await app.ready();
+    return app;
+};
+
+export default loadApp;

@@ -8,8 +8,8 @@ export const driver = Type.Object({
     abbreviation: Type.String(),
     permanent_number: Type.Union([Type.String(), Type.Null()]),
     gender: Type.String(),
-    date_of_birth: Type.String(),
-    date_of_death: Type.Union([Type.String(), Type.Null()]),
+    date_of_birth: Type.String({ format: "date-time" }), // Dates are strings in the database
+    date_of_death: Type.Union([Type.String({ format: "date-time"}), Type.Null()]),
     place_of_birth: Type.String(),
     country_of_birth_country_id: Type.String(),
     nationality_country_id: Type.String(),

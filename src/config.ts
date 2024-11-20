@@ -16,7 +16,7 @@ export const envOptions = {
     dotenv: true,
     schema: {
         type: "object",
-        required: ["PORT", "JWT_SECRET", "DATABASE_URL", "DIRECT_URL"],
+        required: ["PORT", "JWT_SECRET", "DATABASE_URL"],
         properties: {
             PORT: {
                 type: "string",
@@ -26,9 +26,6 @@ export const envOptions = {
                 type: "string",
             },
             DATABASE_URL: {
-                type: "string",
-            },
-            DIRECT_URL: {
                 type: "string",
             },
         },

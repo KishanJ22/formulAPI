@@ -1,36 +1,26 @@
-import { logger, envOptions as options } from "../config.js";
+import { envOptions as options } from "../config.js";
 import fastify, { FastifyInstance } from "fastify";
 import { fastifyEnv } from "@fastify/env";
 import { fastifyJwt } from "@fastify/jwt";
 import FastifyFormBody from "@fastify/formbody";
-import fastifyAutoload from "@fastify/autoload";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import registerRoutes from "../routes/routes.js";
+import jwtAuth from "../plugins/jwtAuth.js";
 
-const mockApp: FastifyInstance = fastify({
-    logger,
-});
+const mockApp: FastifyInstance = fastify();
 
 mockApp.register(fastifyEnv, options);
 await mockApp.after();
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-mockApp.register(fastifyAutoload, {
-    dir: join(__dirname, "../routes"),
-});
-
+mockApp.register(FastifyFormBody);
+mockApp.register(registerRoutes);
+mockApp.register(jwtAuth);
 mockApp.register(fastifyJwt, {
     secret: mockApp.config.JWT_SECRET,
 });
 
-mockApp.register(FastifyFormBody);
+export const loadMockApp = async () => {
+    await mockApp.ready();
+    return mockApp;
+};
 
-mockApp.listen({ port: mockApp.config.PORT }, function (err) {
-    if (err) {
-        mockApp.log.error(err);
-        process.exit(1);
-    }
-});
-
-export default mockApp;
+export default loadMockApp;
