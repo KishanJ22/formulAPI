@@ -3,7 +3,7 @@ name: Deploy to Development environment
 on:
     workflow_run:
         workflows:
-            - "Build and Deploy"
+            - "Build and Test"
         types:
             - completed
 env:
