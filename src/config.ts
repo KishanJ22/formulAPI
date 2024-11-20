@@ -1,2 +1,33 @@
-export const PORT = process.env.PORT ?? 3000;
-export const BASE_URL = "http://localhost";
+import { PrismaClient } from "@prisma/client";
+
+export const prisma = new PrismaClient();
+
+export const logger = {
+    transport: {
+        target: "pino-pretty",
+        options: {
+            translateTime: "HH:MM:ss Z",
+            ignore: "pid,hostname",
+        },
+    },
+};
+
+export const envOptions = {
+    dotenv: true,
+    schema: {
+        type: "object",
+        required: ["PORT", "JWT_SECRET", "DATABASE_URL"],
+        properties: {
+            PORT: {
+                type: "string",
+                default: "3000",
+            },
+            JWT_SECRET: {
+                type: "string",
+            },
+            DATABASE_URL: {
+                type: "string",
+            },
+        },
+    },
+};

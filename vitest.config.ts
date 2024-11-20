@@ -9,7 +9,6 @@ export default defineConfig({
             exclude: [
                 "src/__mocks__",
                 "src/config.ts",
-                "src/db.ts",
                 "src/index.ts",
             ],
         },

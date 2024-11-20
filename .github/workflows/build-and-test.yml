@@ -10,9 +10,10 @@ jobs:
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             APP_PORT: ${{ secrets.APP_PORT }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
         strategy:
             matrix:
-                node-version: [18.x]
+                node-version: [20.x]
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
