@@ -10,6 +10,7 @@ jobs:
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             APP_PORT: ${{ secrets.APP_PORT }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
         strategy:
             matrix:
                 node-version: [18.x]
