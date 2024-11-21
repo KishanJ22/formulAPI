@@ -8,7 +8,7 @@ on:
             - completed
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+    IMAGE_NAME: kishanj22/formulapi-dev
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
