@@ -1,27 +1,20 @@
 ARG NODE_VERSION=22.7.0
 
-# Builder stage
-FROM node:${NODE_VERSION}-alpine AS builder
+FROM node:${NODE_VERSION}-alpine AS base
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node prisma ./prisma/
-COPY --chown=node:node package.json pnpm-lock.yaml ./
+COPY prisma ./prisma/
 
-RUN corepack enable && pnpm install --frozen-lockfile --no-cache
+COPY package.json pnpm-lock.yaml ./
 
-COPY --chown=node:node . .
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+COPY . .
 
 RUN pnpm build
 
-# Production stage
-FROM node:${NODE_VERSION}-alpine
-
-WORKDIR /usr/src/app
-
-COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/package.json ./
+RUN mkdir -p /usr/src/app/node_modules/.vite && chown -R node:node /usr/src/app/node_modules
 
 EXPOSE 3000
 
