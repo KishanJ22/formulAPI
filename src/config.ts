@@ -16,8 +16,11 @@ export const envOptions = {
     dotenv: true,
     schema: {
         type: "object",
-        required: ["PORT", "JWT_SECRET", "DATABASE_URL"],
+        required: ["HOST", "PORT", "JWT_SECRET", "DATABASE_URL"],
         properties: {
+            HOST: {
+                type: "string",
+            },
             PORT: {
                 type: "string",
                 default: "3000",
