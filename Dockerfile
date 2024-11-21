@@ -16,6 +16,9 @@ RUN pnpm build
 
 RUN mkdir -p /usr/src/app/node_modules/.vite && chown -R node:node /usr/src/app/node_modules
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD ["curl", "-f", "http://localhost:3000/health"]
+
 EXPOSE 3000
 
 USER node
