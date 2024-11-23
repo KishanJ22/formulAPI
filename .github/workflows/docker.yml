@@ -20,7 +20,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Build and run tests on Docker container
-              run: |
-                  docker compose up -d --build
-                  docker compose exec formulapi pnpm test
+            - name: Build Docker container
+              run: docker compose up -d --build
+            - name: Test Docker container
+              run: docker compose run formulapi pnpm test
