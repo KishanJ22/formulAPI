@@ -23,7 +23,4 @@ jobs:
             - name: Build and run tests on Docker container
               run: |
                   docker compose up -d --build
-            - name: Run tests
-              run: |
                   docker compose exec formulapi pnpm test
-
