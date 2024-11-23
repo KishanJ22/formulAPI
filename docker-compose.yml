@@ -12,8 +12,6 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       PORT: ${PORT}
     restart: unless-stopped
-    env_file:
-      - .env
     deploy:
       resources:
         limits:

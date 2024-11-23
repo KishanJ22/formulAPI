@@ -27,6 +27,14 @@ jobs:
 
             - name: Build and run Docker container
               uses: hoverkraft-tech/compose-action@v2.0.2
+              with:
+                up-flags: -d --build
+              env:
+                DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                PORT: ${{ secrets.PORT }}
+                JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                HOST: ${{ secrets.HOST }}
+                NODE_ENV: ${{ vars.NODE_ENV }}
             
             - name: Run Tests
               run: |
