@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: formulapi-${NODE_ENV}
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      HOST: ${HOST}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${PORT}
+    restart: unless-stopped
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+        reservations:
+          cpus: "0.25"
+          memory: "256M"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://${HOST}:${PORT}/health"]
+      start_period: 1m
+      interval: 1m
+      timeout: 10s
+      retries: 3
