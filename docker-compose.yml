@@ -4,8 +4,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: formulapi-${NODE_ENV}
+    expose:
+      - 80
     ports:
-      - "${PORT}:${PORT}"
+      - "${PORT}:80"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       HOST: ${HOST}
