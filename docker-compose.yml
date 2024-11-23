@@ -9,8 +9,6 @@ services:
       HOST: ${HOST}
       JWT_SECRET: ${JWT_SECRET}
       PORT: ${PORT}
-    ports:
-      - "${PORT}:${PORT}"
     restart: unless-stopped
     deploy:
       resources:
