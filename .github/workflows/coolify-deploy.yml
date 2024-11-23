@@ -10,7 +10,9 @@ on:
 jobs:
     deploy:
         runs-on: ubuntu-latest
-        environment: development
+        environment: 
+            name: development
+            url: "https://formulapi-dev.kjet.ipv64.net"
         steps:
             - name: Deploy to Coolify
               run: |
