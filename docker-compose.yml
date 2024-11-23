@@ -4,13 +4,13 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: formulapi-${NODE_ENV}
-    expose:
-      - "80"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       HOST: ${HOST}
       JWT_SECRET: ${JWT_SECRET}
       PORT: ${PORT}
+    ports:
+      - "${PORT}:${PORT}"
     restart: unless-stopped
     deploy:
       resources:
