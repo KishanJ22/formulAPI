@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "pgsodium", "public", "vault"]
+  schemas  = ["auth", "pgsodium", "public", "vault", "formula_one"]
 }
 
 model circuit {
@@ -29,7 +29,7 @@ model circuit {
   @@index([name], map: "crct_name_idx")
   @@index([place_name], map: "crct_place_name_idx")
   @@index([type], map: "crct_type_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model constructor {
@@ -69,7 +69,7 @@ model constructor {
   @@index([country_id], map: "cnst_country_id_idx")
   @@index([full_name], map: "cnst_full_name_idx")
   @@index([name], map: "cnst_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model continent {
@@ -79,7 +79,7 @@ model continent {
   demonym String    @db.VarChar(100)
   country country[]
 
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model country {
@@ -101,7 +101,7 @@ model country {
   tyre_manufacturer                                    tyre_manufacturer[]
 
   @@index([continent_id], map: "cntr_continent_id_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model driver {
@@ -158,7 +158,7 @@ model driver {
   @@index([permanent_number], map: "drvr_permanent_number_idx")
   @@index([place_of_birth], map: "drvr_place_of_birth_idx")
   @@index([second_nationality_country_id], map: "drvr_second_nationality_country_id_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model driver_family_relationship {
@@ -174,7 +174,7 @@ model driver_family_relationship {
   @@index([driver_id], map: "dfrl_driver_id_idx")
   @@index([other_driver_id], map: "dfrl_other_driver_id_idx")
   @@index([position_display_order], map: "dfrl_position_display_order_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model engine_manufacturer {
@@ -209,7 +209,7 @@ model engine_manufacturer {
 
   @@index([country_id], map: "enmf_country_id_idx")
   @@index([name], map: "enmf_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model entrant {
@@ -223,7 +223,7 @@ model entrant {
   season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
 
   @@index([name], map: "entr_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model grand_prix {
@@ -242,7 +242,7 @@ model grand_prix {
   @@index([full_name], map: "grpx_full_name_idx")
   @@index([name], map: "grpx_name_idx")
   @@index([short_name], map: "grpx_short_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model race {
@@ -298,7 +298,7 @@ model race {
   @@index([date])
   @@index([round])
   @@index([year])
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model race_constructor_standing {
@@ -321,7 +321,7 @@ model race_constructor_standing {
   @@index([position_number], map: "rccs_position_number_idx")
   @@index([position_text], map: "rccs_position_text_idx")
   @@index([race_id], map: "rccs_race_id_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model race_data {
@@ -412,7 +412,7 @@ model race_data {
   @@index([race_id], map: "rcda_race_id_idx")
   @@index([type], map: "rcda_type_idx")
   @@index([tyre_manufacturer_id], map: "rcda_tyre_manufacturer_id_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model race_driver_standing {
@@ -432,7 +432,7 @@ model race_driver_standing {
   @@index([position_number], map: "rcds_position_number_idx")
   @@index([position_text], map: "rcds_position_text_idx")
   @@index([race_id], map: "rcds_race_id_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season {
@@ -451,7 +451,7 @@ model season {
   season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
   season_tyre_manufacturer         season_tyre_manufacturer[]
 
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_constructor_standing {
@@ -473,7 +473,7 @@ model season_constructor_standing {
   @@index([position_number], map: "sscs_position_number_idx")
   @@index([position_text], map: "sscs_position_text_idx")
   @@index([year], map: "sscs_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_driver_standing {
@@ -492,7 +492,7 @@ model season_driver_standing {
   @@index([position_number], map: "ssds_position_number_idx")
   @@index([position_text], map: "ssds_position_text_idx")
   @@index([year], map: "ssds_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_entrant {
@@ -507,7 +507,7 @@ model season_entrant {
   @@index([country_id], map: "sent_country_id_idx")
   @@index([entrant_id], map: "sent_entrant_id_idx")
   @@index([year], map: "sent_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_entrant_constructor {
@@ -525,7 +525,7 @@ model season_entrant_constructor {
   @@index([engine_manufacturer_id], map: "secn_engine_manufacturer_id_idx")
   @@index([entrant_id], map: "secn_entrant_id_idx")
   @@index([year], map: "secn_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_entrant_driver {
@@ -549,7 +549,7 @@ model season_entrant_driver {
   @@index([engine_manufacturer_id], map: "sedr_engine_manufacturer_id_idx")
   @@index([entrant_id], map: "sedr_entrant_id_idx")
   @@index([year], map: "sedr_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_entrant_tyre_manufacturer {
@@ -570,7 +570,7 @@ model season_entrant_tyre_manufacturer {
   @@index([constructor_id], map: "setm_constructor_id_idx")
   @@index([entrant_id], map: "setm_entrant_id_idx")
   @@index([year], map: "setm_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model tyre_manufacturer {
@@ -594,7 +594,7 @@ model tyre_manufacturer {
 
   @@index([country_id], map: "tymf_country_id_idx")
   @@index([name], map: "tymf_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -730,7 +730,7 @@ model chassis {
   @@index([constructor_id], map: "chss_constructor_id_idx")
   @@index([full_name], map: "chss_full_name_idx")
   @@index([name], map: "chss_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model constructor_chronology {
@@ -747,7 +747,7 @@ model constructor_chronology {
   @@index([constructor_id], map: "cnch_constructor_id_idx")
   @@index([other_constructor_id], map: "cnch_other_constructor_id_idx")
   @@index([position_display_order], map: "cnch_position_display_order_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model engine {
@@ -767,7 +767,7 @@ model engine {
   @@index([engine_manufacturer_id], map: "engn_engine_manufacturer_id_idx")
   @@index([full_name], map: "engn_full_name_idx")
   @@index([name], map: "engn_name_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_constructor {
@@ -793,7 +793,7 @@ model season_constructor {
   @@id([year, constructor_id])
   @@index([constructor_id], map: "sscn_constructor_id_idx")
   @@index([year], map: "sscn_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_driver {
@@ -819,7 +819,7 @@ model season_driver {
   @@id([year, driver_id])
   @@index([driver_id], map: "ssdr_driver_id_idx")
   @@index([year], map: "ssdr_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_engine_manufacturer {
@@ -844,7 +844,7 @@ model season_engine_manufacturer {
   @@id([year, engine_manufacturer_id])
   @@index([engine_manufacturer_id], map: "ssem_engine_manufacturer_id_idx")
   @@index([year], map: "ssem_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_entrant_chassis {
@@ -865,7 +865,7 @@ model season_entrant_chassis {
   @@index([engine_manufacturer_id], map: "sech_engine_manufacturer_id_idx")
   @@index([entrant_id], map: "sech_entrant_id_idx")
   @@index([year], map: "sech_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_entrant_engine {
@@ -886,7 +886,7 @@ model season_entrant_engine {
   @@index([engine_manufacturer_id], map: "seen_engine_manufacturer_id_idx")
   @@index([entrant_id], map: "seen_entrant_id_idx")
   @@index([year], map: "seen_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 model season_tyre_manufacturer {
@@ -908,7 +908,7 @@ model season_tyre_manufacturer {
   @@id([year, tyre_manufacturer_id])
   @@index([tyre_manufacturer_id], map: "sstm_tyre_manufacturer_id_idx")
   @@index([year], map: "sstm_year_idx")
-  @@schema("public")
+  @@schema("formula_one")
 }
 
 enum key_status {
