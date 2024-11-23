@@ -3,7 +3,7 @@ name: Deploy to Development environment
 on:
     workflow_run:
         workflows:
-            - "Codacy Security Scan"
+            - "Docker Workflow"
         types:
             - completed
 env:
