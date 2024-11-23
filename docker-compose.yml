@@ -1,5 +1,5 @@
 services:
-  app:
+  formulapi:
     build:
       context: .
       dockerfile: Dockerfile
