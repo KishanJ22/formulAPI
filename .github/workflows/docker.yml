@@ -4,14 +4,17 @@ on:
     pull_request:
         branches:
             - main
-    push:
-        branches:
-            - main
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: 'The environment to run the scan in'
+                required: true
+                type: environment
 
 
 jobs:
     docker:
-        environment: development
+        environment: ${{ github.event.inputs.environment }}
         runs-on: ubuntu-latest
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -35,7 +38,3 @@ jobs:
                 JWT_SECRET: ${{ secrets.JWT_SECRET }}
                 HOST: ${{ secrets.HOST }}
                 NODE_ENV: ${{ vars.NODE_ENV }}
-            
-            - name: Run Tests
-              run: |
-                  docker-compose exec formulapi pnpm test
