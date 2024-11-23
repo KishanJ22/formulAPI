@@ -1,9 +1,12 @@
 name: Deploy to Development environment
 
 on:
+    push:
+        branches:
+            - main
     workflow_run:
         workflows:
-            - "Codacy Security Scan"
+            - "Build and Test Docker Container"
         types:
             - completed
 env:

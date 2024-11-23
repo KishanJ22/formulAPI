@@ -2,22 +2,18 @@ ARG NODE_VERSION=22.7.0
 
 FROM node:${NODE_VERSION}-alpine AS base
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY prisma ./prisma/
+RUN npm install -g pnpm
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml prisma ./
 
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
 RUN pnpm build
 
-RUN mkdir -p /usr/src/app/node_modules/.vite && chown -R node:node /usr/src/app/node_modules
-
 EXPOSE 3000
-
-USER node
 
 CMD ["pnpm", "start"]

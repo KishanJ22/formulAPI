@@ -1,0 +1,26 @@
+name: Build and Test Docker Container
+
+on:
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    docker:
+        runs-on: ubuntu-latest
+        env:
+            NODE_ENV: development
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            PORT: ${{ secrets.PORT }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            HOST: ${{ secrets.HOST }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Build Docker container
+              run: docker compose up -d --build
+            - name: Test Docker container
+              run: docker compose run formulapi pnpm test
