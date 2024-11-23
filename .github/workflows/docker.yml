@@ -8,20 +8,23 @@ on:
         branches:
             - main
 
+
 jobs:
     docker:
+        environment: development
         runs-on: ubuntu-latest
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             PORT: ${{ secrets.PORT }}
             JWT_SECRET: ${{ secrets.JWT_SECRET }}
             HOST: ${{ secrets.HOST }}
+            NODE_ENV: ${{ vars.NODE_ENV }}
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-                  
+
             - name: Build and run Docker container
               uses: hoverkraft-tech/compose-action@v2.0.2
             
