@@ -4,17 +4,14 @@ on:
     pull_request:
         branches:
             - main
-    workflow_run:
-        workflows:
-            - "Build and Test"
-        types:
-            - completed
+    push:
+        branches:
+            - main
 
 jobs:
     codacy-security-scan:
         name: Codacy Security Scan
         runs-on: ubuntu-latest
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         steps:
             - name: Checkout code
               uses: actions/checkout@main
@@ -22,7 +19,6 @@ jobs:
             - name: Run Codacy Analysis CLI
               uses: codacy/codacy-analysis-cli-action@v4.4.5
               with:
-                  project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
                   api-token: ${{ secrets.CODACY_API_TOKEN }}
                   output: results.sarif
                   format: sarif

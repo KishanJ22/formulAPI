@@ -1,19 +1,16 @@
-name: Docker Workflow
+name: Build and Test Docker Container
 
 on:
     pull_request:
         branches:
             - main
-    workflow_run:
-        workflows:
-            - "Build and Test"
-        types:
-            - completed
+    push:
+        branches:
+            - main
 
 jobs:
     docker:
         runs-on: ubuntu-latest
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         env:
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             PORT: ${{ secrets.PORT }}
@@ -26,7 +23,7 @@ jobs:
                   fetch-depth: 0
             - name: Build and run Docker container
               run: |
-                docker-compose up --build -d
+                  docker-compose up --build -d
             - name: Run Tests
               run: |
-                docker-compose exec formulapi pnpm test
+                  docker-compose exec formulapi pnpm test
