@@ -4,37 +4,26 @@ on:
     pull_request:
         branches:
             - main
-    workflow_dispatch:
-        inputs:
-            environment:
-                description: 'The environment to run the scan in'
-                required: true
-                type: environment
-
 
 jobs:
     docker:
-        environment: ${{ github.event.inputs.environment }}
         runs-on: ubuntu-latest
         env:
+            NODE_ENV: development
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             PORT: ${{ secrets.PORT }}
             JWT_SECRET: ${{ secrets.JWT_SECRET }}
             HOST: ${{ secrets.HOST }}
-            NODE_ENV: ${{ vars.NODE_ENV }}
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
-            - name: Build and run Docker container
-              uses: hoverkraft-tech/compose-action@v2.0.2
-              with:
-                up-flags: -d --build
-              env:
-                DATABASE_URL: ${{ secrets.DATABASE_URL }}
-                PORT: ${{ secrets.PORT }}
-                JWT_SECRET: ${{ secrets.JWT_SECRET }}
-                HOST: ${{ secrets.HOST }}
-                NODE_ENV: ${{ vars.NODE_ENV }}
+            - name: Build and run tests on Docker container
+              run: |
+                  docker compose up -d --build
+            - name: Run tests
+              run: |
+                  docker compose exec formulapi pnpm test
+
