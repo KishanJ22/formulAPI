@@ -9,6 +9,8 @@ services:
       HOST: ${HOST}
       JWT_SECRET: ${JWT_SECRET}
       PORT: ${PORT}
+    ports:
+      - "${PORT}:${PORT}" # Cannot access locally if port is not exposed
     restart: unless-stopped
     deploy:
       resources:
