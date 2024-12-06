@@ -1,5 +1,5 @@
-import { prisma } from "../../config.js";
-import { type Driver, driver } from "./schemas/DriverSchema.js";
+import { type Driver, driver } from "./DriverSchema.js";
+import { getDriversFromDb } from "./drivers.model.js";
 import {
     invalidQuery,
     type InvalidQuerySchema,
@@ -41,15 +41,7 @@ const getDrivers = (fastify: FastifyInstance) => {
         },
         async (request, reply) => {
             try {
-                const drivers = await prisma.driver.findMany();
-
-                const formattedDrivers: Driver[] = drivers.map((driver) => ({
-                    ...driver,
-                    date_of_birth: driver.date_of_birth.toISOString(),
-                    date_of_death: driver.date_of_death?.toISOString() ?? null,
-                    total_points: driver.total_points.toNumber(),
-                    total_championship_points: driver.total_championship_points.toNumber(),
-                }));
+                const drivers = await getDriversFromDb();
 
                 if (request.query && Object.keys(request.query).length > 0) {
                     const query: Partial<Driver> = request.query;
@@ -65,15 +57,13 @@ const getDrivers = (fastify: FastifyInstance) => {
                             .send({ message: "Invalid Search Query" });
                     }
 
-                    const filteredDrivers = formattedDrivers.filter(
-                        (driver: Driver) => {
-                            return queryKeys.every(
-                                (key) =>
-                                    query[key]?.toString() ===
-                                    driver[key]?.toString(),
-                            );
-                        },
-                    );
+                    const filteredDrivers = drivers.filter((driver: Driver) => {
+                        return queryKeys.every(
+                            (key) =>
+                                query[key]?.toString() ===
+                                driver[key]?.toString(),
+                        );
+                    });
 
                     if (filteredDrivers.length === 0) {
                         return reply
@@ -83,7 +73,7 @@ const getDrivers = (fastify: FastifyInstance) => {
 
                     return reply.status(200).send({ data: filteredDrivers });
                 } else {
-                    return reply.status(200).send({ data: formattedDrivers });
+                    return reply.status(200).send({ data: drivers });
                 }
             } catch (error) {
                 fastify.log.error(error);
