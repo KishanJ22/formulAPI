@@ -9,4 +9,5 @@ const registerRoutes = async (fastify: FastifyInstance) => {
     fastify.register(getMetrics);
 };
 
+
 export default registerRoutes;
