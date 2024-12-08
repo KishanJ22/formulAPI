@@ -1,5 +1,6 @@
 import loadMockApp from "../__mocks__/mockApp";
-import { describe, test, beforeAll, expect } from "vitest";
+import { describe, test, beforeAll, expect, vi } from "vitest";
+import { prisma } from "../config";
 
 describe("app", () => {
     let app: any;
@@ -16,5 +17,17 @@ describe("app", () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.json().message).toBe("API is healthy");
+    });
+
+    test("Should return an unhealthy status", async () => {
+        prisma.driver.findFirst = vi.fn().mockResolvedValue(null);
+
+        const response = await app.inject({
+            method: "GET",
+            url: "/health",
+        });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.json().message).toBe("API is unhealthy");
     });
 });
