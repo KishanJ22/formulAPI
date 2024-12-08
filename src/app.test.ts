@@ -1,4 +1,4 @@
-import loadApp from "./app";
+import loadApp from "./app.js";
 import { describe, test, beforeAll, expect } from "vitest";
 
 describe("app", () => {
