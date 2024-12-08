@@ -1,11 +1,11 @@
-import loadMockApp from "./__mocks__/mockApp";
+import loadApp from "./app";
 import { describe, test, beforeAll, expect } from "vitest";
 
 describe("app", () => {
     let app: any;
 
     beforeAll(async () => {
-        app = await loadMockApp();
+        app = await loadApp();
     });
 
     test("app is defined", () => {
