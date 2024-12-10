@@ -1,4 +1,4 @@
-import { prisma } from "../config";
+import { prisma } from "../config.js";
 import type { FastifyInstance } from "fastify";
 
 export default async function getHealth(app: FastifyInstance) {

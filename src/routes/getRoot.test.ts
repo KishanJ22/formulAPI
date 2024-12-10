@@ -1,4 +1,4 @@
-import loadMockApp from "../__mocks__/mockApp";
+import loadMockApp from "../__mocks__/mockApp.js";
 import { describe, test, beforeAll, expect } from "vitest";
 
 describe("app", () => {

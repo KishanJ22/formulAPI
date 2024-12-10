@@ -1,6 +1,6 @@
-import loadMockApp from "../__mocks__/mockApp";
+import loadMockApp from "../__mocks__/mockApp.js";
 import { describe, test, beforeAll, expect, vi } from "vitest";
-import { prisma } from "../config";
+import { prisma } from "../config.js";
 
 describe("app", () => {
     let app: any;
