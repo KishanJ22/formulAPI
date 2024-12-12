@@ -18,6 +18,7 @@ app.register(fastifyJwt, {
     secret: app.config.JWT_SECRET,
 });
 
+
 export const loadApp = async () => {
     await app.ready();
     return app;
