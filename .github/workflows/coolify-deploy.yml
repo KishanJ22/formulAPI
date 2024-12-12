@@ -14,6 +14,11 @@ jobs:
             name: development
             url: "https://formulapi-dev.kjet.dev"
         steps:
+            - name: Bypass Cloudflare for GitHub Action
+              uses: xiaotianxt/bypass-cloudflare-for-github-action@v1.1.1
+              with:
+                cf_zone_id: ${{ secrets.CF_ZONE_ID }}
+                cf_api_token: ${{ secrets.CF_API_TOKEN }}
             - name: Deploy to Coolify
               run: |
                   curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
