@@ -7,7 +7,21 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "pgsodium", "public", "vault", "formula_one"]
+  schemas  = ["formulaone"]
+}
+
+model chassis {
+  id                     String                   @id @db.VarChar(100)
+  constructor_id         String                   @db.VarChar(100)
+  name                   String                   @db.VarChar(100)
+  full_name              String                   @db.VarChar(100)
+  constructor            constructor              @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season_entrant_chassis season_entrant_chassis[]
+
+  @@index([constructor_id], map: "chss_constructor_id_idx")
+  @@index([full_name], map: "chss_full_name_idx")
+  @@index([name], map: "chss_name_idx")
+  @@schema("formulaone")
 }
 
 model circuit {
@@ -29,7 +43,7 @@ model circuit {
   @@index([name], map: "crct_name_idx")
   @@index([place_name], map: "crct_place_name_idx")
   @@index([type], map: "crct_type_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model constructor {
@@ -69,7 +83,24 @@ model constructor {
   @@index([country_id], map: "cnst_country_id_idx")
   @@index([full_name], map: "cnst_full_name_idx")
   @@index([name], map: "cnst_name_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model constructor_chronology {
+  constructor_id                                                       String      @db.VarChar(100)
+  position_display_order                                               Int
+  other_constructor_id                                                 String      @db.VarChar(100)
+  year_from                                                            Int
+  year_to                                                              Int?
+  constructor_constructor_chronology_constructor_idToconstructor       constructor @relation("constructor_chronology_constructor_idToconstructor", fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  constructor_constructor_chronology_other_constructor_idToconstructor constructor @relation("constructor_chronology_other_constructor_idToconstructor", fields: [other_constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([constructor_id, position_display_order])
+  @@unique([constructor_id, other_constructor_id, year_from, year_to])
+  @@index([constructor_id], map: "cnch_constructor_id_idx")
+  @@index([other_constructor_id], map: "cnch_other_constructor_id_idx")
+  @@index([position_display_order], map: "cnch_position_display_order_idx")
+  @@schema("formulaone")
 }
 
 model continent {
@@ -79,7 +110,7 @@ model continent {
   demonym String    @db.VarChar(100)
   country country[]
 
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model country {
@@ -101,7 +132,7 @@ model country {
   tyre_manufacturer                                    tyre_manufacturer[]
 
   @@index([continent_id], map: "cntr_continent_id_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model driver {
@@ -158,7 +189,7 @@ model driver {
   @@index([permanent_number], map: "drvr_permanent_number_idx")
   @@index([place_of_birth], map: "drvr_place_of_birth_idx")
   @@index([second_nationality_country_id], map: "drvr_second_nationality_country_id_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model driver_family_relationship {
@@ -174,7 +205,27 @@ model driver_family_relationship {
   @@index([driver_id], map: "dfrl_driver_id_idx")
   @@index([other_driver_id], map: "dfrl_other_driver_id_idx")
   @@index([position_display_order], map: "dfrl_position_display_order_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model engine {
+  id                     String                  @id @db.VarChar(100)
+  engine_manufacturer_id String                  @db.VarChar(100)
+  name                   String                  @db.VarChar(100)
+  full_name              String                  @db.VarChar(100)
+  capacity               Decimal?                @db.Decimal(2, 1)
+  configuration          String?                 @db.VarChar(100)
+  aspiration             String?                 @db.VarChar(100)
+  engine_manufacturer    engine_manufacturer     @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season_entrant_engine  season_entrant_engine[]
+
+  @@index([aspiration], map: "engn_aspiration_idx")
+  @@index([capacity], map: "engn_capacity_idx")
+  @@index([configuration], map: "engn_configuration_idx")
+  @@index([engine_manufacturer_id], map: "engn_engine_manufacturer_id_idx")
+  @@index([full_name], map: "engn_full_name_idx")
+  @@index([name], map: "engn_name_idx")
+  @@schema("formulaone")
 }
 
 model engine_manufacturer {
@@ -209,7 +260,7 @@ model engine_manufacturer {
 
   @@index([country_id], map: "enmf_country_id_idx")
   @@index([name], map: "enmf_name_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model entrant {
@@ -223,7 +274,7 @@ model entrant {
   season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
 
   @@index([name], map: "entr_name_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model grand_prix {
@@ -242,7 +293,7 @@ model grand_prix {
   @@index([full_name], map: "grpx_full_name_idx")
   @@index([name], map: "grpx_name_idx")
   @@index([short_name], map: "grpx_short_name_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model race {
@@ -293,12 +344,12 @@ model race {
 
   @@unique([year, round])
   @@index([circuit_id])
-  @@index([official_name])
-  @@index([grand_prix_id])
   @@index([date])
+  @@index([grand_prix_id])
+  @@index([official_name])
   @@index([round])
   @@index([year])
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model race_constructor_standing {
@@ -321,7 +372,7 @@ model race_constructor_standing {
   @@index([position_number], map: "rccs_position_number_idx")
   @@index([position_text], map: "rccs_position_text_idx")
   @@index([race_id], map: "rccs_race_id_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model race_data {
@@ -412,7 +463,7 @@ model race_data {
   @@index([race_id], map: "rcda_race_id_idx")
   @@index([type], map: "rcda_type_idx")
   @@index([tyre_manufacturer_id], map: "rcda_tyre_manufacturer_id_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model race_driver_standing {
@@ -432,7 +483,7 @@ model race_driver_standing {
   @@index([position_number], map: "rcds_position_number_idx")
   @@index([position_text], map: "rcds_position_text_idx")
   @@index([race_id], map: "rcds_race_id_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model season {
@@ -451,323 +502,7 @@ model season {
   season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
   season_tyre_manufacturer         season_tyre_manufacturer[]
 
-  @@schema("formula_one")
-}
-
-model season_constructor_standing {
-  year                   Int
-  position_display_order Int
-  position_number        Int?
-  position_text          String              @db.VarChar(4)
-  constructor_id         String              @db.VarChar(100)
-  engine_manufacturer_id String              @db.VarChar(100)
-  points                 Decimal             @db.Decimal(8, 2)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([year, position_display_order])
-  @@index([constructor_id], map: "sscs_constructor_id_idx")
-  @@index([engine_manufacturer_id], map: "sscs_engine_manufacturer_id_idx")
-  @@index([position_display_order], map: "sscs_position_display_order_idx")
-  @@index([position_number], map: "sscs_position_number_idx")
-  @@index([position_text], map: "sscs_position_text_idx")
-  @@index([year], map: "sscs_year_idx")
-  @@schema("formula_one")
-}
-
-model season_driver_standing {
-  year                   Int
-  position_display_order Int
-  position_number        Int?
-  position_text          String  @db.VarChar(4)
-  driver_id              String  @db.VarChar(100)
-  points                 Decimal @db.Decimal(8, 2)
-  driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([year, position_display_order])
-  @@index([driver_id], map: "ssds_driver_id_idx")
-  @@index([position_display_order], map: "ssds_position_display_order_idx")
-  @@index([position_number], map: "ssds_position_number_idx")
-  @@index([position_text], map: "ssds_position_text_idx")
-  @@index([year], map: "ssds_year_idx")
-  @@schema("formula_one")
-}
-
-model season_entrant {
-  year       Int
-  entrant_id String  @db.VarChar(100)
-  country_id String  @db.VarChar(100)
-  country    country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant    entrant @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season     season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([year, entrant_id])
-  @@index([country_id], map: "sent_country_id_idx")
-  @@index([entrant_id], map: "sent_entrant_id_idx")
-  @@index([year], map: "sent_year_idx")
-  @@schema("formula_one")
-}
-
-model season_entrant_constructor {
-  year                   Int
-  entrant_id             String              @db.VarChar(100)
-  constructor_id         String              @db.VarChar(100)
-  engine_manufacturer_id String              @db.VarChar(100)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([year, entrant_id, constructor_id, engine_manufacturer_id])
-  @@index([constructor_id], map: "secn_constructor_id_idx")
-  @@index([engine_manufacturer_id], map: "secn_engine_manufacturer_id_idx")
-  @@index([entrant_id], map: "secn_entrant_id_idx")
-  @@index([year], map: "secn_year_idx")
-  @@schema("formula_one")
-}
-
-model season_entrant_driver {
-  year                   Int
-  entrant_id             String              @db.VarChar(100)
-  constructor_id         String              @db.VarChar(100)
-  engine_manufacturer_id String              @db.VarChar(100)
-  driver_id              String              @db.VarChar(100)
-  rounds                 String?             @db.VarChar(100)
-  rounds_text            String?             @db.VarChar(100)
-  test_driver            Boolean
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  driver                 driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([year, entrant_id, constructor_id, engine_manufacturer_id, driver_id])
-  @@index([constructor_id], map: "sedr_constructor_id_idx")
-  @@index([driver_id], map: "sedr_driver_id_idx")
-  @@index([engine_manufacturer_id], map: "sedr_engine_manufacturer_id_idx")
-  @@index([entrant_id], map: "sedr_entrant_id_idx")
-  @@index([year], map: "sedr_year_idx")
-  @@schema("formula_one")
-}
-
-model season_entrant_tyre_manufacturer {
-  year                   Int
-  entrant_id             String              @db.VarChar(100)
-  constructor_id         String              @db.VarChar(100)
-  engine_manufacturer_id String              @db.VarChar(100)
-  tyre_manufacturer_id   String              @db.VarChar(100)
-  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tyre_manufacturer      tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([year, entrant_id, constructor_id, engine_manufacturer_id, tyre_manufacturer_id])
-  @@index([tyre_manufacturer_id], map: "setm_tyre_manufacturer_id_idx")
-  @@index([engine_manufacturer_id], map: "setm_engine_manufacturer_id_idx")
-  @@index([constructor_id], map: "setm_constructor_id_idx")
-  @@index([entrant_id], map: "setm_entrant_id_idx")
-  @@index([year], map: "setm_year_idx")
-  @@schema("formula_one")
-}
-
-model tyre_manufacturer {
-  id                               String                             @id @db.VarChar(100)
-  name                             String                             @db.VarChar(100)
-  country_id                       String                             @db.VarChar(100)
-  best_starting_grid_position      Int?
-  best_race_result                 Int?
-  total_race_entries               Int
-  total_race_starts                Int
-  total_race_wins                  Int
-  total_race_laps                  Int
-  total_podiums                    Int
-  total_podium_races               Int
-  total_pole_positions             Int
-  total_fastest_laps               Int
-  race_data                        race_data[]
-  season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
-  season_tyre_manufacturer         season_tyre_manufacturer[]
-  country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([country_id], map: "tymf_country_id_idx")
-  @@index([name], map: "tymf_name_idx")
-  @@schema("formula_one")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model audit_log_entries {
-  instance_id String?   @db.Uuid
-  id          String    @id @db.Uuid
-  payload     Json?     @db.Json
-  created_at  DateTime? @db.Timestamptz(6)
-
-  @@index([instance_id], map: "audit_logs_instance_id_idx")
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model instances {
-  id              String    @id @db.Uuid
-  uuid            String?   @db.Uuid
-  raw_base_config String?
-  created_at      DateTime? @db.Timestamptz(6)
-  updated_at      DateTime? @db.Timestamptz(6)
-
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model refresh_tokens {
-  instance_id String?   @db.Uuid
-  id          BigInt    @id @default(autoincrement())
-  token       String?   @db.VarChar(255)
-  user_id     String?   @db.VarChar(255)
-  revoked     Boolean?
-  created_at  DateTime? @db.Timestamptz(6)
-  updated_at  DateTime? @db.Timestamptz(6)
-
-  @@index([instance_id])
-  @@index([instance_id, user_id])
-  @@index([token])
-  @@schema("auth")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model schema_migrations {
-  version String @id @db.VarChar(255)
-
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
-model auth_users {
-  instance_id          String?   @db.Uuid
-  id                   String    @id @db.Uuid
-  aud                  String?   @db.VarChar(255)
-  role                 String?   @db.VarChar(255)
-  email                String?   @unique @db.VarChar(255)
-  encrypted_password   String?   @db.VarChar(255)
-  confirmed_at         DateTime? @db.Timestamptz(6)
-  invited_at           DateTime? @db.Timestamptz(6)
-  confirmation_token   String?   @db.VarChar(255)
-  confirmation_sent_at DateTime? @db.Timestamptz(6)
-  recovery_token       String?   @db.VarChar(255)
-  recovery_sent_at     DateTime? @db.Timestamptz(6)
-  email_change_token   String?   @db.VarChar(255)
-  email_change         String?   @db.VarChar(255)
-  email_change_sent_at DateTime? @db.Timestamptz(6)
-  last_sign_in_at      DateTime? @db.Timestamptz(6)
-  raw_app_meta_data    Json?
-  raw_user_meta_data   Json?
-  is_super_admin       Boolean?
-  created_at           DateTime? @db.Timestamptz(6)
-  updated_at           DateTime? @db.Timestamptz(6)
-
-  @@index([instance_id])
-  @@index([instance_id, email])
-  @@map("users")
-  @@schema("auth")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model key {
-  id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  status          key_status? @default(valid)
-  created         DateTime    @default(now()) @db.Timestamptz(6)
-  expires         DateTime?   @db.Timestamptz(6)
-  key_type        key_type?
-  key_id          BigInt?     @default(autoincrement())
-  key_context     Bytes?      @default("cGdzb2RpdW0=")
-  name            String?     @unique(map: "pgsodium_key_unique_name")
-  associated_data String?     @default("associated")
-  raw_key         Bytes?
-  raw_key_nonce   Bytes?
-  parent_key      String?     @db.Uuid
-  comment         String?
-  user_data       String?
-  key             key?        @relation("keyTokey", fields: [parent_key], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  other_key       key[]       @relation("keyTokey")
-  secrets         secrets[]
-
-  @@unique([key_id, key_context, key_type], map: "key_key_id_key_context_key_type_idx")
-  @@schema("pgsodium")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model secrets {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String?
-  description String   @default("")
-  secret      String
-  key_id      String?  @default(dbgenerated("(pgsodium.create_key()).id")) @db.Uuid
-  nonce       Bytes?   @default(dbgenerated("pgsodium.crypto_aead_det_noncegen()"))
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime @default(now()) @db.Timestamptz(6)
-  key         key?     @relation(fields: [key_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("vault")
-}
-
-model chassis {
-  id                     String                   @id @db.VarChar(100)
-  constructor_id         String                   @db.VarChar(100)
-  name                   String                   @db.VarChar(100)
-  full_name              String                   @db.VarChar(100)
-  constructor            constructor              @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season_entrant_chassis season_entrant_chassis[]
-
-  @@index([constructor_id], map: "chss_constructor_id_idx")
-  @@index([full_name], map: "chss_full_name_idx")
-  @@index([name], map: "chss_name_idx")
-  @@schema("formula_one")
-}
-
-model constructor_chronology {
-  constructor_id                                                       String      @db.VarChar(100)
-  position_display_order                                               Int
-  other_constructor_id                                                 String      @db.VarChar(100)
-  year_from                                                            Int
-  year_to                                                              Int?
-  constructor_constructor_chronology_constructor_idToconstructor       constructor @relation("constructor_chronology_constructor_idToconstructor", fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  constructor_constructor_chronology_other_constructor_idToconstructor constructor @relation("constructor_chronology_other_constructor_idToconstructor", fields: [other_constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([constructor_id, position_display_order])
-  @@unique([constructor_id, other_constructor_id, year_from, year_to])
-  @@index([constructor_id], map: "cnch_constructor_id_idx")
-  @@index([other_constructor_id], map: "cnch_other_constructor_id_idx")
-  @@index([position_display_order], map: "cnch_position_display_order_idx")
-  @@schema("formula_one")
-}
-
-model engine {
-  id                     String                  @id @db.VarChar(100)
-  engine_manufacturer_id String                  @db.VarChar(100)
-  name                   String                  @db.VarChar(100)
-  full_name              String                  @db.VarChar(100)
-  capacity               Decimal?                @db.Decimal(2, 1)
-  configuration          String?                 @db.VarChar(100)
-  aspiration             String?                 @db.VarChar(100)
-  engine_manufacturer    engine_manufacturer     @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  season_entrant_engine  season_entrant_engine[]
-
-  @@index([aspiration], map: "engn_aspiration_idx")
-  @@index([capacity], map: "engn_capacity_idx")
-  @@index([configuration], map: "engn_configuration_idx")
-  @@index([engine_manufacturer_id], map: "engn_engine_manufacturer_id_idx")
-  @@index([full_name], map: "engn_full_name_idx")
-  @@index([name], map: "engn_name_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
 model season_constructor {
@@ -793,7 +528,29 @@ model season_constructor {
   @@id([year, constructor_id])
   @@index([constructor_id], map: "sscn_constructor_id_idx")
   @@index([year], map: "sscn_year_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model season_constructor_standing {
+  year                   Int
+  position_display_order Int
+  position_number        Int?
+  position_text          String              @db.VarChar(4)
+  constructor_id         String              @db.VarChar(100)
+  engine_manufacturer_id String              @db.VarChar(100)
+  points                 Decimal             @db.Decimal(8, 2)
+  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([year, position_display_order])
+  @@index([constructor_id], map: "sscs_constructor_id_idx")
+  @@index([engine_manufacturer_id], map: "sscs_engine_manufacturer_id_idx")
+  @@index([position_display_order], map: "sscs_position_display_order_idx")
+  @@index([position_number], map: "sscs_position_number_idx")
+  @@index([position_text], map: "sscs_position_text_idx")
+  @@index([year], map: "sscs_year_idx")
+  @@schema("formulaone")
 }
 
 model season_driver {
@@ -819,7 +576,26 @@ model season_driver {
   @@id([year, driver_id])
   @@index([driver_id], map: "ssdr_driver_id_idx")
   @@index([year], map: "ssdr_year_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model season_driver_standing {
+  year                   Int
+  position_display_order Int
+  position_number        Int?
+  position_text          String  @db.VarChar(4)
+  driver_id              String  @db.VarChar(100)
+  points                 Decimal @db.Decimal(8, 2)
+  driver                 driver  @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season                 season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([year, position_display_order])
+  @@index([driver_id], map: "ssds_driver_id_idx")
+  @@index([position_display_order], map: "ssds_position_display_order_idx")
+  @@index([position_number], map: "ssds_position_number_idx")
+  @@index([position_text], map: "ssds_position_text_idx")
+  @@index([year], map: "ssds_year_idx")
+  @@schema("formulaone")
 }
 
 model season_engine_manufacturer {
@@ -844,7 +620,22 @@ model season_engine_manufacturer {
   @@id([year, engine_manufacturer_id])
   @@index([engine_manufacturer_id], map: "ssem_engine_manufacturer_id_idx")
   @@index([year], map: "ssem_year_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model season_entrant {
+  year       Int
+  entrant_id String  @db.VarChar(100)
+  country_id String  @db.VarChar(100)
+  country    country @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entrant    entrant @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season     season  @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([year, entrant_id])
+  @@index([country_id], map: "sent_country_id_idx")
+  @@index([entrant_id], map: "sent_entrant_id_idx")
+  @@index([year], map: "sent_year_idx")
+  @@schema("formulaone")
 }
 
 model season_entrant_chassis {
@@ -865,7 +656,49 @@ model season_entrant_chassis {
   @@index([engine_manufacturer_id], map: "sech_engine_manufacturer_id_idx")
   @@index([entrant_id], map: "sech_entrant_id_idx")
   @@index([year], map: "sech_year_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model season_entrant_constructor {
+  year                   Int
+  entrant_id             String              @db.VarChar(100)
+  constructor_id         String              @db.VarChar(100)
+  engine_manufacturer_id String              @db.VarChar(100)
+  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([year, entrant_id, constructor_id, engine_manufacturer_id])
+  @@index([constructor_id], map: "secn_constructor_id_idx")
+  @@index([engine_manufacturer_id], map: "secn_engine_manufacturer_id_idx")
+  @@index([entrant_id], map: "secn_entrant_id_idx")
+  @@index([year], map: "secn_year_idx")
+  @@schema("formulaone")
+}
+
+model season_entrant_driver {
+  year                   Int
+  entrant_id             String              @db.VarChar(100)
+  constructor_id         String              @db.VarChar(100)
+  engine_manufacturer_id String              @db.VarChar(100)
+  driver_id              String              @db.VarChar(100)
+  rounds                 String?             @db.VarChar(100)
+  rounds_text            String?             @db.VarChar(100)
+  test_driver            Boolean
+  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  driver                 driver              @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([year, entrant_id, constructor_id, engine_manufacturer_id, driver_id])
+  @@index([constructor_id], map: "sedr_constructor_id_idx")
+  @@index([driver_id], map: "sedr_driver_id_idx")
+  @@index([engine_manufacturer_id], map: "sedr_engine_manufacturer_id_idx")
+  @@index([entrant_id], map: "sedr_entrant_id_idx")
+  @@index([year], map: "sedr_year_idx")
+  @@schema("formulaone")
 }
 
 model season_entrant_engine {
@@ -886,7 +719,28 @@ model season_entrant_engine {
   @@index([engine_manufacturer_id], map: "seen_engine_manufacturer_id_idx")
   @@index([entrant_id], map: "seen_entrant_id_idx")
   @@index([year], map: "seen_year_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
+}
+
+model season_entrant_tyre_manufacturer {
+  year                   Int
+  entrant_id             String              @db.VarChar(100)
+  constructor_id         String              @db.VarChar(100)
+  engine_manufacturer_id String              @db.VarChar(100)
+  tyre_manufacturer_id   String              @db.VarChar(100)
+  constructor            constructor         @relation(fields: [constructor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  engine_manufacturer    engine_manufacturer @relation(fields: [engine_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entrant                entrant             @relation(fields: [entrant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tyre_manufacturer      tyre_manufacturer   @relation(fields: [tyre_manufacturer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  season                 season              @relation(fields: [year], references: [year], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([year, entrant_id, constructor_id, engine_manufacturer_id, tyre_manufacturer_id])
+  @@index([constructor_id], map: "setm_constructor_id_idx")
+  @@index([engine_manufacturer_id], map: "setm_engine_manufacturer_id_idx")
+  @@index([entrant_id], map: "setm_entrant_id_idx")
+  @@index([tyre_manufacturer_id], map: "setm_tyre_manufacturer_id_idx")
+  @@index([year], map: "setm_year_idx")
+  @@schema("formulaone")
 }
 
 model season_tyre_manufacturer {
@@ -908,30 +762,29 @@ model season_tyre_manufacturer {
   @@id([year, tyre_manufacturer_id])
   @@index([tyre_manufacturer_id], map: "sstm_tyre_manufacturer_id_idx")
   @@index([year], map: "sstm_year_idx")
-  @@schema("formula_one")
+  @@schema("formulaone")
 }
 
-enum key_status {
-  default
-  valid
-  invalid
-  expired
+model tyre_manufacturer {
+  id                               String                             @id @db.VarChar(100)
+  name                             String                             @db.VarChar(100)
+  country_id                       String                             @db.VarChar(100)
+  best_starting_grid_position      Int?
+  best_race_result                 Int?
+  total_race_entries               Int
+  total_race_starts                Int
+  total_race_wins                  Int
+  total_race_laps                  Int
+  total_podiums                    Int
+  total_podium_races               Int
+  total_pole_positions             Int
+  total_fastest_laps               Int
+  race_data                        race_data[]
+  season_entrant_tyre_manufacturer season_entrant_tyre_manufacturer[]
+  season_tyre_manufacturer         season_tyre_manufacturer[]
+  country                          country                            @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@schema("pgsodium")
-}
-
-enum key_type {
-  aead_ietf        @map("aead-ietf")
-  aead_det         @map("aead-det")
-  hmacsha512
-  hmacsha256
-  auth
-  shorthash
-  generichash
-  kdf
-  secretbox
-  secretstream
-  stream_xchacha20
-
-  @@schema("pgsodium")
+  @@index([country_id], map: "tymf_country_id_idx")
+  @@index([name], map: "tymf_name_idx")
+  @@schema("formulaone")
 }
