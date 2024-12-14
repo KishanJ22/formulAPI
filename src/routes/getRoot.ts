@@ -5,3 +5,4 @@ export default async function getRoot(app: FastifyInstance) {
         return reply.status(200).send({ message: "Welcome to FormulAPI!" });
     });
 }
+
