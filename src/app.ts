@@ -19,7 +19,6 @@ app.register(fastifyJwt, {
 });
 
 
-
 export const loadApp = async () => {
     await app.ready();
     return app;
