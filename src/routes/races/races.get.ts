@@ -1,16 +1,18 @@
 import type { FastifyInstance } from "fastify";
 import {
-    invalidQuery,
-    type InvalidQuerySchema,
     internalServerError,
     type InternalServerErrorSchema,
 } from "../../utils/Error.js";
 import { getRacesForSeason } from "./races.model.js";
 import {
-    type Race,
-    race,
+    type SeasonNotProvided,
+    seasonNotProvided,
     type GetRacesQuery,
     getRacesQuery,
+    type Race,
+    race,
+    type RacesNotFound,
+    racesNotFound,
 } from "./racesSchema.js";
 import { Type } from "@sinclair/typebox";
 
@@ -19,7 +21,8 @@ const getRaces = (fastify: FastifyInstance) => {
         QueryString: GetRacesQuery;
         Reply:
             | { data: Race[] }
-            | InvalidQuerySchema
+            | SeasonNotProvided
+            | RacesNotFound
             | InternalServerErrorSchema;
     }>(
         "/races",
@@ -27,7 +30,8 @@ const getRaces = (fastify: FastifyInstance) => {
             schema: {
                 response: {
                     200: Type.Object({ data: Type.Array(race) }),
-                    400: invalidQuery,
+                    400: seasonNotProvided,
+                    404: racesNotFound,
                     500: internalServerError,
                 },
                 querystring: {
@@ -38,17 +42,19 @@ const getRaces = (fastify: FastifyInstance) => {
             },
         },
         async (request, reply) => {
+            let races: Race[] = [];
             const { season } = request.query as GetRacesQuery;
-            let races : Race[];
+
+            if (!season) {
+                return reply
+                    .status(400)
+                    .send({ message: "Season not provided in search query" });
+            }
 
             try {
-                if (!season) {
-                    return reply
-                        .status(400)
-                        .send({ message: "Invalid Search Query" });
+                if (season) {
+                    races = await getRacesForSeason(season);
                 }
-
-                races = await getRacesForSeason(season);
             } catch (error) {
                 fastify.log.error(error);
                 return reply

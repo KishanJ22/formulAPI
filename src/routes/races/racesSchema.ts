@@ -28,7 +28,13 @@ export const race = Type.Object({
 export type Race = Static<typeof race>;
 
 export const racesNotFound = Type.Object({
-    message: Type.Literal("Races not found"),
+    message: Type.Literal("Unable to find races"),
 });
 
 export type RacesNotFound = Static<typeof racesNotFound>;
+
+export const seasonNotProvided = Type.Object({
+    message: Type.Literal("Season not provided in search query"),
+});
+
+export type SeasonNotProvided = Static<typeof seasonNotProvided>;
