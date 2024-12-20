@@ -1,12 +1,17 @@
 import type { FastifyInstance } from "fastify";
 import {
-    internalServerError,
     type InternalServerErrorSchema,
+    internalServerError,
+    type InvalidQuerySchema,
+    invalidQuery,
 } from "../../utils/Error.js";
-import { getRacesForSeason } from "./races.model.js";
 import {
-    type SeasonNotProvided,
-    seasonNotProvided,
+    getRacesByYear,
+    getRacesByRaceWinner,
+    getRacesByYearAndRaceWinner,
+    getRacesByGrandPrix,
+} from "./races.model.js";
+import {
     type GetRacesQuery,
     getRacesQuery,
     type Race,
@@ -21,7 +26,7 @@ const getRaces = (fastify: FastifyInstance) => {
         QueryString: GetRacesQuery;
         Reply:
             | { data: Race[] }
-            | SeasonNotProvided
+            | InvalidQuerySchema
             | RacesNotFound
             | InternalServerErrorSchema;
     }>(
@@ -30,36 +35,57 @@ const getRaces = (fastify: FastifyInstance) => {
             schema: {
                 response: {
                     200: Type.Object({ data: Type.Array(race) }),
-                    400: seasonNotProvided,
+                    400: invalidQuery,
                     404: racesNotFound,
                     500: internalServerError,
                 },
                 querystring: {
                     type: "object",
-                    required: ["season"],
                     properties: getRacesQuery.properties,
                 },
             },
         },
         async (request, reply) => {
             let races: Race[] = [];
-            const { season } = request.query as GetRacesQuery;
+            const { year, raceWinnerId, grandPrixId } =
+                request.query as GetRacesQuery;
 
-            if (!season) {
+            if (!year && !raceWinnerId && !grandPrixId) {
                 return reply
                     .status(400)
-                    .send({ message: "Season not provided in search query" });
+                    .send({ message: "Invalid Search Query" });
             }
 
             try {
-                if (season) {
-                    races = await getRacesForSeason(season);
+                if (year && raceWinnerId) {
+                    races = await getRacesByYearAndRaceWinner(
+                        raceWinnerId,
+                        year,
+                    );
+                }
+
+                if (year) {
+                    races = await getRacesByYear(year);
+                }
+
+                if (raceWinnerId) {
+                    races = await getRacesByRaceWinner(raceWinnerId);
+                }
+
+                if (grandPrixId) {
+                    races = await getRacesByGrandPrix(grandPrixId);
                 }
             } catch (error) {
                 fastify.log.error(error);
                 return reply
                     .status(500)
                     .send({ message: "Internal Server Error" });
+            }
+
+            if (races.length === 0) {
+                return reply
+                    .status(404)
+                    .send({ message: "Unable to find races" });
             }
 
             return reply.status(200).send({ data: races });
