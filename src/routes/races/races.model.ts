@@ -1,6 +1,8 @@
 import { prisma } from "../../config";
 import { type Static, Type } from "@sinclair/typebox";
 import { Race } from "./racesSchema";
+import { getGrandPrixFromDb } from "../grand-prix/grand-prix.model";
+import { getDriversFromDb } from "../drivers/drivers.model";
 
 const dbRace = Type.Object({
     round: Type.Number(),
@@ -16,28 +18,39 @@ const dbRace = Type.Object({
     pole_position_driver_id: Type.String(),
     pole_position_time: Type.String(),
     race_winner_driver_id: Type.String(),
-    fastest_lap: Type.String(),
+    fastest_lap_time: Type.String(),
     fastest_lap_driver_id: Type.String(),
     driver_of_the_day_id: Type.String(),
 });
 
 type DbRace = Static<typeof dbRace>;
 
-const formatRaces = (races: DbRace[]): Race[] => {
+const formatRaces = async (races: DbRace[]): Promise<Race[]> => {
+    const grandPrix = await getGrandPrixFromDb();
+    const drivers = await getDriversFromDb();
     return races.map((race: DbRace) => {
         return {
             round: race.round,
             raceDate: race.race_date,
-            grandPrixId: race.grand_prix_id,
             officialName: race.official_name,
+            grandPrixName: grandPrix.find((gp) => gp.id === race.grand_prix_id)
+                ?.name || "",
             circuitType: race.circuit_type,
             laps: race.laps,
-            polePositionDriverId: race.pole_position_driver_id,
+            polePositionDriver: drivers.find(
+                (driver) => driver.id === race.pole_position_driver_id,
+            )?.name || "",
             polePositionTime: race.pole_position_time,
-            raceWinnerDriverId: race.race_winner_driver_id,
-            fastestLapTime: race.fastest_lap_driver_id,
-            fastestLapDriverId: race.fastest_lap_driver_id,
-            driverOfTheDayId: race.driver_of_the_day_id,
+            raceWinnerDriver: drivers.find(
+                (driver) => driver.id === race.race_winner_driver_id,
+            )?.name || "",
+            fastestLapTime: race.fastest_lap_time,
+            fastestLapDriver: drivers.find(
+                (driver) => driver.id === race.fastest_lap_driver_id,
+            )?.name || "",
+            driverOfTheDay: drivers.find(
+                (driver) => driver.id === race.driver_of_the_day_id,
+            )?.name || "",
         };
     });
 };
@@ -54,7 +67,7 @@ export const getRacesForSeason = async (season: number): Promise<Race[]> => {
         qr.driver_id AS pole_position_driver_id,
         qr.q3 AS pole_position_time,
         rr.driver_id AS race_winner_driver_id,
-        fl.time AS fastest_lap,
+        fl.time AS fastest_lap_time,
         fl.driver_id AS fastest_lap_driver_id,
         dotd.driver_id AS driver_of_the_day_id
     FROM

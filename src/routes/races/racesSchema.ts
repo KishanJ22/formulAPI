@@ -9,20 +9,20 @@ export type GetRacesQuery = Static<typeof getRacesQuery>;
 export const race = Type.Object({
     round: Type.Number(),
     raceDate: Type.String({ format: "date" }),
-    grandPrixId: Type.String(),
     officialName: Type.String(),
+    grandPrixName: Type.String(),
     circuitType: Type.Union([
         Type.Literal("STREET"),
         Type.Literal("RACE"),
         Type.Literal("ROAD"),
     ]),
     laps: Type.Number(),
-    polePositionDriverId: Type.String(),
+    polePositionDriver: Type.String(),
     polePositionTime: Type.String(),
-    raceWinnerDriverId: Type.String(),
+    raceWinnerDriver: Type.String(),
     fastestLapTime: Type.String(),
-    fastestLapDriverId: Type.String(),
-    driverOfTheDayId: Type.String(),
+    fastestLapDriver: Type.String(),
+    driverOfTheDay: Type.String(),
 });
 
 export type Race = Static<typeof race>;
