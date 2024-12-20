@@ -1,12 +1,15 @@
 import { type Static, Type } from "@sinclair/typebox";
 
 export const getRacesQuery = Type.Object({
-    season: Type.Number(),
+    year: Type.Number(),
+    raceWinnerId: Type.String(),
+    grandPrixId: Type.String(),
 });
 
 export type GetRacesQuery = Static<typeof getRacesQuery>;
 
 export const race = Type.Object({
+    year: Type.Number(),
     round: Type.Number(),
     raceDate: Type.String({ format: "date" }),
     officialName: Type.String(),
