@@ -29,6 +29,7 @@
         "@fastify/env": "^5.0.1",
         "@fastify/formbody": "^8.0.1",
         "@fastify/jwt": "^9.0.1",
+        "@fastify/swagger": "^9.4.0",
         "@prisma/client": "^5.22.0",
         "@sinclair/typebox": "^0.33.22",
         "@types/jsonwebtoken": "^9.0.7",
