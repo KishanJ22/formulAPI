@@ -9,7 +9,6 @@ export const logger = {
             target: "pino-pretty",
             options: {
                 ignore: "pid,hostname",
-                include: "level,time,",
                 colorize: true,
                 levelFirst: true,
                 translateTime: "HH:MM:ss Z",
@@ -26,7 +25,7 @@ export const logger = {
                 translateTime: "yyyy-mm-dd HH:MM:ss Z",
             },
         },
-    }
+    },
 };
 
 export const openapi = {
@@ -37,7 +36,7 @@ export const openapi = {
     },
     servers: [
         {
-            url: "http://localhost:"+process.env.PORT,
+            url: "http://localhost:" + process.env.PORT,
             description: "Local server",
         },
         {
