@@ -4,10 +4,10 @@ on:
     workflow_run:
         workflows: Build and Test
         types: completed
+        branches: main
 
 jobs:
     deploy:
-        if: github.ref_name == 'refs/heads/main' && github.event.workflow_run.conclusion == 'success'
         runs-on: ubuntu-latest
         environment: 
             name: development
