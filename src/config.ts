@@ -3,13 +3,30 @@ import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
 export const logger = {
-    transport: {
-        target: "pino-pretty",
-        options: {
-            translateTime: "HH:MM:ss Z",
-            ignore: "pid,hostname",
+    development: {
+        level: "debug",
+        transport: {
+            target: "pino-pretty",
+            options: {
+                ignore: "pid,hostname",
+                include: "level,time,",
+                colorize: true,
+                levelFirst: true,
+                translateTime: "HH:MM:ss Z",
+            },
         },
     },
+    test: false,
+    production: {
+        level: "info",
+        transport: {
+            target: "pino/file",
+            options: {
+                destination: "./app.log",
+                translateTime: "yyyy-mm-dd HH:MM:ss Z",
+            },
+        },
+    }
 };
 
 export const openapi = {
@@ -20,7 +37,7 @@ export const openapi = {
     },
     servers: [
         {
-            url: "http://localhost:3000",
+            url: "http://localhost:"+process.env.PORT,
             description: "Local server",
         },
         {
@@ -74,7 +91,7 @@ export const envOptions = {
             NODE_ENV: {
                 type: "string",
                 default: "development",
-            }
+            },
         },
     },
 };
