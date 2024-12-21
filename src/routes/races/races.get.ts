@@ -62,13 +62,9 @@ const getRaces = (fastify: FastifyInstance) => {
                         raceWinnerId,
                         year,
                     );
-                }
-
-                if (year) {
+                } else if (year) {
                     races = await getRacesByYear(year);
-                }
-
-                if (raceWinnerId) {
+                } else if (raceWinnerId) {
                     races = await getRacesByRaceWinner(raceWinnerId);
                 }
 
