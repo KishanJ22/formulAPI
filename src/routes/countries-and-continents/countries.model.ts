@@ -7,12 +7,14 @@ const country = Type.Object({
     code: Type.String(),
     name: Type.String(),
     demonym: Type.Union([Type.String(), Type.Null()]),
-    continent: Type.String(),
+    continent: Type.Union([Type.String(), Type.Null()]),
 });
 
 export type Country = Static<typeof country>;
 
-export const getCountriesAndContinentsFromDb = async (): Promise<Map<string, Country>> => {
+export const getCountriesAndContinentsFromDb = async (): Promise<
+    Map<string, Country>
+> => {
     const getCountries = await prisma.country.findMany();
     const continents = await getContinentsFromDb();
 
@@ -25,10 +27,14 @@ export const getCountriesAndContinentsFromDb = async (): Promise<Map<string, Cou
                     code: country.alpha3_code,
                     name: country.name,
                     demonym: country.demonym,
-                    continent: continents.find((continent) => continent.id === country.continent_id)?.name || "",
+                    continent:
+                        continents.find(
+                            (continent) =>
+                                continent.id === country.continent_id,
+                        )?.name || null,
                 },
             ];
-        })
+        }),
     );
 
     return countries;
