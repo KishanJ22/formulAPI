@@ -31,7 +31,7 @@ export const getCountriesAndContinentsFromDb = async (): Promise<
                         continents.find(
                             (continent) =>
                                 continent.id === country.continent_id,
-                        )?.name || null,
+                        )?.name ?? null,
                 },
             ];
         }),

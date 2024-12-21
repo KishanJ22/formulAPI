@@ -31,9 +31,9 @@ const formatGrandPrix = async (
             shortName: gp.short_name,
             abbreviation: gp.abbreviation,
             countryName:
-                (gp.country_id && countries.get(gp.country_id)?.name) || null,
+                (gp.country_id && countries.get(gp.country_id)?.name) ?? null,
             countryCode:
-                (gp.country_id && countries.get(gp.country_id)?.code) || null,
+                (gp.country_id && countries.get(gp.country_id)?.code) ?? null,
             totalRacesHeld: gp.total_races_held,
         };
     });

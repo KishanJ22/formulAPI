@@ -43,21 +43,21 @@ const formatRaces = async (races: DbRace[]): Promise<Race[]> => {
             polePositionDriver:
                 drivers.find(
                     (driver) => driver.id === race.pole_position_driver_id,
-                )?.name || "",
+                )?.name ?? "",
             polePositionTime: race.pole_position_time,
             raceWinnerDriver:
                 drivers.find(
                     (driver) => driver.id === race.race_winner_driver_id,
-                )?.name || "",
+                )?.name ?? "",
             fastestLapTime: race.fastest_lap_time,
             fastestLapDriver:
                 drivers.find(
                     (driver) => driver.id === race.fastest_lap_driver_id,
-                )?.name || "",
+                )?.name ?? "",
             driverOfTheDay:
                 drivers.find(
                     (driver) => driver.id === race.driver_of_the_day_id,
-                )?.name || "",
+                )?.name ?? "",
         };
     });
 };
