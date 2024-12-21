@@ -1,8 +1,8 @@
-import { prisma } from "../../config";
+import { prisma } from "../../config.js";
 import { type Static, Type } from "@sinclair/typebox";
-import { Race } from "./racesSchema";
-import { getGrandPrixFromDb } from "../grand-prix/grand-prix.model";
-import { getDriversFromDb } from "../drivers/drivers.model";
+import { Race } from "./racesSchema.js";
+import { getGrandPrixFromDb } from "../grand-prix/grand-prix.model.js";
+import { getDriversFromDb } from "../drivers/drivers.model.js";
 
 const dbRace = Type.Object({
     year: Type.Number(),
