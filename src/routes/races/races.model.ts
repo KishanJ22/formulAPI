@@ -36,8 +36,8 @@ const formatRaces = async (races: DbRace[]): Promise<Race[]> => {
             raceDate: race.race_date,
             officialName: race.official_name,
             grandPrixName:
-                grandPrix.find((gp) => gp.id === race.grand_prix_id)?.fullName ||
-                "",
+                grandPrix.find((gp) => gp.id === race.grand_prix_id)
+                    ?.fullName ?? "",
             circuitType: race.circuit_type,
             laps: race.laps,
             polePositionDriver:

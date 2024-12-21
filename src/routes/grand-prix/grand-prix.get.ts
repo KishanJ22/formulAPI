@@ -67,7 +67,7 @@ const getGrandPrix = (fastify: FastifyInstance) => {
                                 } else {
                                     return gp[key]
                                         ?.toString()
-                                        .includes(query[key]?.toString() || "");
+                                        .includes(query[key]?.toString() ?? "");
                                 }
                             });
                         },
