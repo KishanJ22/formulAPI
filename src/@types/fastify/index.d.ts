@@ -14,6 +14,7 @@ declare module "fastify" {
             roles: string[],
         ) => (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
         config: {
+            NODE_ENV: string;
             DATABASE_URL: string;
             JWT_SECRET: string;
             PORT: number;
